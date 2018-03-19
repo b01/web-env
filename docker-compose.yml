@@ -28,30 +28,6 @@ services:
             - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
 
-    php: # to connect use: docker exec -it centos-php bash
-        container_name: 'centos-php'
-        image: 'khalifahks/centos-php'
-        networks:
-            webEnvNet:
-                aliases:
-                    - 'wen_php'
-        volumes:
-            # The directory should also map to the same directory where Nginx
-            # serves up PHP files.
-            # So the "root" directive in an Ngixn configuration server block
-            # should start with this as well.
-            - "${APPS_DIR}:${DOCKER_APPS_DIR}"
-
-    php54: # to connect use: docker exec -it centos-php54 bash
-        container_name: 'centos-php54'
-        image: 'khalifahks/centos-php:54'
-        networks:
-            webEnvNet:
-                aliases:
-                    - 'wen_php54'
-        volumes:
-            - "${APPS_DIR}:${DOCKER_APPS_DIR}"
-
     mysql: # to connect use: docker exec -it centos-mysql bash
         container_name: 'centos-mysql'
         image: 'khalifahks/centos-mysql'
@@ -71,7 +47,6 @@ services:
                 aliases:
                     - 'wen_apps'
         volumes:
-            - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
 
     # This is the docker container to login to and build your apps.
@@ -83,7 +58,6 @@ services:
                 aliases:
                     - 'wen_apps54'
         volumes:
-            - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
 networks:
     webEnvNet:
