@@ -28,15 +28,15 @@ services:
             - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
 
-    mysql: # to connect use: docker exec -it centos-mysql bash
-        container_name: 'centos-mysql'
-        image: 'khalifahks/centos-mysql'
-        networks:
-            webEnvNet:
-                aliases:
-                    - 'wen_mysql'
-        volumes:
-            - "${APPS_DIR}/mysql:/var/lib/mysql"
+    # mysql: # to connect use: docker exec -it centos-mysql bash
+    #     container_name: 'centos-mysql'
+    #     image: 'khalifahks/centos-mysql'
+    #     networks:
+    #         webEnvNet:
+    #             aliases:
+    #                 - 'wen_mysql'
+    #     volumes:
+    #         - "${APPS_DIR}/mysql:/var/lib/mysql"
 
     # This is the docker container to login to and build your apps.
     apps: # to connect use: docker exec -it centos-apps bash
