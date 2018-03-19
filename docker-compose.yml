@@ -14,9 +14,6 @@ services:
     nginx: # to connect use: docker exec -it centos-nginx bash
         container_name: 'centos-nginx'
         image: 'khalifahks/centos-nginx'
-        depends_on:
-            - 'php'
-            - 'php54'
         networks:
             webEnvNet:
                 aliases:
