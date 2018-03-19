@@ -39,6 +39,8 @@ services:
     apps: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps'
         image: 'khalifahks/centos-apps'
+        depends_on:
+            - 'nginx'
         networks:
             webEnvNet:
                 aliases:
@@ -50,6 +52,8 @@ services:
     apps54: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps54'
         image: 'khalifahks/centos-apps:54'
+        depends_on:
+            - 'nginx'
         networks:
             webEnvNet:
                 aliases:
