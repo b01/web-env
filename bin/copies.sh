@@ -2,15 +2,24 @@
 
 pwd
 
+SSH_DIR=$(echo ~/.ssh)
+
 # Copy SSH keys over to the containers.
-if [[ -f "~/.ssh/" ]]; then
+if [ -d "${SSH_DIR}" ]; then
+    printf "copy ssh keys to apps54\n"
     docker cp ~/.ssh/. centos-apps54:/root/.ssh
+
+    printf "copy ssh keys to apps\n"
     docker cp ~/.ssh/. centos-apps:/root/.ssh
+
+    printf "Changing\n"
+    docker exec centos-apps54 "chown" "-R" "root:root" "/root/.ssh/"
+    docker exec centos-apps "chown" "-R" "root:root" "/root/.ssh/"
 fi
 
-docker exec centos-apps54 "chown" "-R" "root:root" "/root/.ssh/"
-docker exec centos-apps "chown" "-R" "root:root" "/root/.ssh/"
-
 # Copy all applications nginx files into the mapped NginX vhost configuration directory.
-cp ~/code/*/web-env/*.conf ~/code/nginx-confs/
-docker exec centos-apps "nginx" "-s" "reload"
+printf "Copying NginX configs over to mapped conatiner directory.\n"
+cp -v ~/code/*/web-env/*.conf ~/code/nginx-confs/
+
+printf "Restarting NginX service.\n"
+docker exec centos-nginx "nginx" "-s" "reload"
