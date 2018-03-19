@@ -19,8 +19,8 @@ services:
                 aliases:
                     - 'wen_nginx'
         ports:
-            - '8081:80'
-            - '3443:443'
+            - '80:80'
+            - '443:443'
         volumes:
             - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
@@ -39,8 +39,6 @@ services:
     apps: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps'
         image: 'khalifahks/centos-apps'
-        depends_on:
-            - 'nginx'
         networks:
             webEnvNet:
                 aliases:
@@ -52,8 +50,6 @@ services:
     apps54: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps54'
         image: 'khalifahks/centos-apps:54'
-        depends_on:
-            - 'nginx'
         networks:
             webEnvNet:
                 aliases:
