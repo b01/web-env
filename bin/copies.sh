@@ -23,3 +23,19 @@ cp -v ~/code/*/web-env/*.conf ~/code/nginx-confs/
 
 printf "Restarting NginX service.\n"
 docker exec centos-nginx "nginx" "-s" "reload"
+
+
+# Copy ~/gitconfig over to app containers.
+FILES=$(echo ~/.gitconfig)
+
+if [ -f "${FILES}" ]; then
+    printf "copy files to apps54...\n"
+    docker cp "${FILES}" centos-apps54:/root/.gitconfig
+
+    printf "copy file to apps...\n"
+    docker cp "${FILES}" centos-apps:/root/.gitconfig
+
+    printf "Changing permissions on the files copied over...\n"
+    docker exec centos-apps54 "chown" "-R" "root:root" "/root/.gitconfig"
+    docker exec centos-apps "chown" "-R" "root:root" "/root/.gitconfig"
+fi
