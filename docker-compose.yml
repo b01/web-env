@@ -14,6 +14,9 @@ services:
     nginx: # to connect use: docker exec -it centos-nginx bash
         container_name: 'centos-nginx'
         image: 'khalifahks/centos-nginx'
+        depends_on:
+            - 'apps' # Because NginX configs will be point to this container.
+            - 'apps54' # Because NginX configs will be point to this container.
         networks:
             webEnvNet:
                 aliases:
@@ -56,5 +59,6 @@ services:
                     - 'wen_apps54'
         volumes:
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
+
 networks:
     webEnvNet:
