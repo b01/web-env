@@ -1,5 +1,8 @@
 version: '3'
 
+# Run this file with something like:
+# docker-compose --project-name=cen_tos up --remove-orphans
+
 services:
 
     memcached: # to connect use: docker exec -it centos-memcached bash

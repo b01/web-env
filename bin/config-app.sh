@@ -36,7 +36,13 @@ if [ ! -d "${APP_NAME}" ]; then
 fi
 
 # 3. Setup with Nginx container.
-NGINX_CONF_FILE=$(find "${HOME}/code/${APP_NAME}/web-env" -name "*-nginx.conf")
+APP_NGINX_CONF_DIR="${HOME}/code/${APP_NAME}/web-env"
+{ # try
+    NGINX_CONF_FILE=$(find "${APP_NGINX_CONF_DIR}" -name "*-nginx.conf")
+} || { # catch
+    NGINX_CONF_FILE=''
+}
+
 echo "NGINX_CONF_FILE=${NGINX_CONF_FILE}"
 
 if [ -f "${NGINX_CONF_FILE}" ]; then
@@ -59,7 +65,7 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
     # Add the apps domain to host PCs' hosts file
     printf "Missing step to add '${APP_NAME}.docker' to the host PCs' host file.\n"
 else
-    printf "Could not find an Nginx config at the location ${NGINX_CONF_FILE} to copy.\n"
+    printf "Could not find an Nginx config at the location \"${APP_NGINX_CONF_DIR}\" to copy.\n"
 fi
 
 # 4. Run build steps if build script is present.
