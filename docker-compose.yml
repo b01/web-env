@@ -56,7 +56,7 @@ services:
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
         ports:
             - '9000:9000'
-            - '10000:1000'
+            - '10000:10000'
         environment:
             XDEBUG_CONFIG: "remote_host=${XDEBUG_CONFIG_IP}"
 
@@ -70,6 +70,11 @@ services:
                     - 'wen_apps54'
         volumes:
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
+        ports:
+            - '11000:11000'
+            - '12000:12000'
+        environment:
+            XDEBUG_CONFIG: "remote_host=${XDEBUG_CONFIG_IP}"
 
 networks:
     webEnvNet:
