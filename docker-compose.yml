@@ -31,6 +31,7 @@ services:
         volumes:
             - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
+            - "${APPS_DIR}/ssl:/etc/ssl/nginx"
         environment:
             XDEBUG_CONFIG: "remote_host=${XDEBUG_CONFIG_IP}"
 
