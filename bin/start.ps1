@@ -1,2 +1,2 @@
-# copy all web-env/*.conf files into ~/code/nginx-confs
- for /r %d in (*) do copy "%d" "d:\Completed Color Files"
+#docker-compose --project-name=marketing_web_env up -d --no-recreate --remove-orphans
+docker-compose --project-name=marketing_web_env up --no-recreate --remove-orphans
