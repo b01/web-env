@@ -57,7 +57,7 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
 
     # Copy the Nginx config to the correct directory.
     printf "making copy: "
-    cp -v "${NGINX_CONF_FILE}" "${NGINX_CONFS_DIR}/${NGINX_NAME}.conf"
+    cp -v "${NGINX_CONF_FILE}" "${NGINX_CONFS_DIR}/${NGINX_NAME}-nginx.conf"
 
     printf "Debug show all Nginx configs: "
     ls "${NGINX_CONFS_DIR}"
