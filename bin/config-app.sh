@@ -14,6 +14,12 @@ if [ ! -z "${2}" ]; then
     APP_CONTAINER="${2}"
 fi
 
+# Allow an nginx container to be specified.
+NGINX_CONTAINER="centos-nginx"
+if [ ! -z "${3}" ]; then
+    NGINX_CONTAINER="${3}"
+fi
+
 # Check APPS_DIR environment variable is defined.
 if [ -z "${APPS_DIR}" ]; then
     printf "APPS_DIR is empty, setting to default ~/code\n"
@@ -57,13 +63,12 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
     ls "${NGINX_CONFS_DIR}"
 
     # Make an SSL certificate for the app.
-    printf "Generating an named SSL certificate for the app ${NGINX_NAME}.docker\n"
-    echo "APP_CONTAINER=${APP_CONTAINER}"
+    printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker\n"
 
-    docker exec "${APP_CONTAINER}" "/generate-named-ssl-cert.sh" "${APP_NAME}.docker"
+    docker exec "${NGINX_CONTAINER}" "/generate-named-ssl-cert.sh" "${NGINX_NAME}.docker"
 
     # Add the apps domain to host PCs' hosts file
-    printf "Missing step to add '${APP_NAME}.docker' to the host PCs' host file.\n"
+    printf "Missing step to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
 else
     printf "Could not find an Nginx config at the location \"${APP_NGINX_CONF_DIR}\" to copy.\n"
 fi
