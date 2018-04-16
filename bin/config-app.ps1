@@ -34,6 +34,7 @@ if (-z "${NGINX_CONFS_DIR}") {
     NGINX_CONFS_DIR=$(echo "${HOME}/code/nginx-confs")
 }
 
+
 # 1.a Change to the docker apps dir.
 cd "${APPS_DIR}"
 printf "CWD: " && pwd
