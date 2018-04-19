@@ -4,8 +4,8 @@
 # $2 = )(centos-apps|centos-apps54)
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
 APP_NAME=$(echo "${1}" | perl -pe 's#.+?/(.+?).git$#\1#g')
-# A sed version if perl is not available.
-#APP_NAME=$(echo "${1}" | sed -E 's#[^/]+/(.+).git#\1#g')
+WEB_ENV_DIR=$(echo "${HOME}/code/${APP_NAME}/web-env/")
+
 printf "Spinning up ${APP_NAME}\n"
 
 # Allow an app container to be specified.
@@ -52,7 +52,6 @@ APP_NGINX_CONF_DIR="${HOME}/code/${APP_NAME}/web-env"
 echo "NGINX_CONF_FILE=${NGINX_CONF_FILE}"
 
 if [ -f "${NGINX_CONF_FILE}" ]; then
-    WEB_ENV_DIR=$(echo "${HOME}/code/${APP_NAME}/web-env/")
     NGINX_NAME=$(echo "${NGINX_CONF_FILE}" | sed "s#${WEB_ENV_DIR}\(.*\)-nginx.conf\$#\1#")
 
     # Copy the Nginx config to the correct directory.
@@ -83,4 +82,17 @@ if [ -f "${BUILD_SCRIPT}" ]; then
     docker exec "${APP_CONTAINER}" "cd" "/code/${APP_NAME}" "&&" "./bin/build.sh"
 else
     printf "No build script found at the location ${BUILD_SCRIPT}.\n"
+fi
+
+# 5. Copy environment variables.
+ENV_FILE="${WEB_ENV_DIR}/env_vars.txt"
+
+if [ -f "${ENV_FILE}" ]; then
+    printf "copy file to apps...\n"
+    docker cp "${ENV_FILE}" centos-apps:/root/env_vars
+
+    printf "Changing permissions on the env_vars copied over...\n"
+    docker exec "${APP_CONTAINER}" "chown" "-R" "root:root" "/root/env_vars"
+    docker exec "${APP_CONTAINER}" "cat" "/root/env_vars" ">>" "/roo/.bashrc"
+    docker exec "${APP_CONTAINER}" "rm" "/root/env_vars"
 fi

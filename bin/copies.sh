@@ -38,17 +38,3 @@ if [ -f "${FILES}" ]; then
     docker exec centos-apps54 "chown" "-R" "root:root" "/root/.gitconfig"
     docker exec centos-apps "chown" "-R" "root:root" "/root/.gitconfig"
 fi
-
-# Copy ~/.bash_profile over to app containers.
-FILES=$(echo ~/.bash_project_vars)
-
-if [ -f "${FILES}" ]; then
-    printf "copy file to apps...\n"
-    docker cp "${FILES}" centos-apps:/root/.bash_project_vars
-
-    printf "Changing permissions on the files copied over...\n"
-    docker exec centos-apps "chown" "-R" "root:root" "/root/.bash_project_vars"
-
-    printf "Sourcing the files copied over...\n"
-    docker exec centos-apps "source" "/root/.bash_project_vars"
-fi
