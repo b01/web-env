@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Directory of this script.
+DIR=$( cd "$( dirname "$0" )" && pwd )
+
 # $1 = URL of a Git repository.
 # $2 = )(centos-apps|centos-apps54)
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
@@ -86,13 +89,14 @@ fi
 
 # 5. Copy environment variables.
 ENV_FILE="${WEB_ENV_DIR}/env_vars.txt"
-
 if [ -f "${ENV_FILE}" ]; then
-    printf "copy file to apps...\n"
-    docker cp "${ENV_FILE}" centos-apps:/root/env_vars
+    docker cp "${DIR}"/../resources/append-vars.sh "${APP_CONTAINER}":/root/append-vars.sh
+    docker exec "${APP_CONTAINER}" chown -R root:root /root/append-vars.sh
+    docker exec "${APP_CONTAINER}" chmod a+x /root/append-vars.sh
 
-    printf "Changing permissions on the env_vars copied over...\n"
-    docker exec "${APP_CONTAINER}" "chown" "-R" "root:root" "/root/env_vars"
-    docker exec "${APP_CONTAINER}" "cat" "/root/env_vars" ">>" "/roo/.bashrc"
-    docker exec "${APP_CONTAINER}" "rm" "/root/env_vars"
+    docker cp "${ENV_FILE}" centos-apps:/root/env_vars
+    docker exec "${APP_CONTAINER}" chown -R root:root /root/env_vars
+    docker exec -i "${APP_CONTAINER}" ls -la /root
+    docker exec -i "${APP_CONTAINER}" /root/append-vars.sh
+    printf "Copied ENV vars.\n"
 fi
