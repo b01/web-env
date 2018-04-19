@@ -13,8 +13,8 @@ if [ -d "${SSH_DIR}" ]; then
     docker cp ~/.ssh/. centos-apps:/root/.ssh
 
     printf "Changing\n"
-    docker exec centos-apps54 "chown" "-R" "root:root" "/root/.ssh/"
-    docker exec centos-apps "chown" "-R" "root:root" "/root/.ssh/"
+    docker exec centos-apps54 chown -R root:root /root/.ssh/
+    docker exec centos-apps chown -R root:root /root/.ssh/
 fi
 
 # Copy all applications nginx files into the mapped NginX vhost configuration directory.
@@ -22,7 +22,7 @@ printf "Copying NginX configs over to mapped conatiner directory.\n"
 cp -v ~/code/*/web-env/*.conf ~/code/nginx-confs/
 
 printf "Restarting NginX service.\n"
-docker exec centos-nginx "nginx" "-s" "reload"
+docker exec centos-nginx nginx -s reload
 
 # Copy ~/gitconfig over to app containers.
 FILES=$(echo ~/.gitconfig)
@@ -35,6 +35,6 @@ if [ -f "${FILES}" ]; then
     docker cp "${FILES}" centos-apps:/root/.gitconfig
 
     printf "Changing permissions on the files copied over...\n"
-    docker exec centos-apps54 "chown" "-R" "root:root" "/root/.gitconfig"
-    docker exec centos-apps "chown" "-R" "root:root" "/root/.gitconfig"
+    docker exec centos-apps54 chown -R root:root /root/.gitconfig
+    docker exec centos-apps chown -R root:root /root/.gitconfig
 fi

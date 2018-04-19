@@ -67,11 +67,11 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
     # Make an SSL certificate for the app.
     printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker\n"
 
-    docker exec "${NGINX_CONTAINER}" "/generate-named-ssl-cert.sh" "${NGINX_NAME}.docker"
+    docker exec "${NGINX_CONTAINER}" generate-named-ssl-cert.sh "${NGINX_NAME}.docker"
 
     # Restart the NginX services
     printf "Restarting NginX service.\n"
-    docker exec centos-nginx "nginx" "-s" "reload"
+    docker exec centos-nginx nginx -s reload
 
     # Add the apps domain to host PCs' hosts file
     printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
@@ -82,7 +82,7 @@ fi
 # 4. Run build steps if build script is present.
 BUILD_SCRIPT="${APP_NAME}/bin/build.sh"
 if [ -f "${BUILD_SCRIPT}" ]; then
-    docker exec "${APP_CONTAINER}" "cd" "/code/${APP_NAME}" "&&" "./bin/build.sh"
+    docker exec "${APP_CONTAINER}" cd /code/"${APP_NAME}" && ./bin/build.sh
 else
     printf "No build script found at the location ${BUILD_SCRIPT}.\n"
 fi
