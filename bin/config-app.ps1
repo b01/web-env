@@ -69,33 +69,33 @@ if (Test-Path -Path $APP_WEB_ENV_DIR) {
 }
 
 if ($NGINX_CONF_FILE -and (Test-Path -Path $NGINX_CONF_FILE)) {
-#    NGINX_NAME=$(echo "${NGINX_CONF_FILE}" | sed "s#${APP_WEB_ENV_DIR}\(.*\)-nginx.conf\$#\1#")
-#
-#    # Copy the Nginx config to the correct directory.
-#    printf "making copy: "
-#    cp -v "${NGINX_CONF_FILE}" "${NGINX_CONFS_DIR}/${NGINX_NAME}-nginx.conf"
-#
-#    printf "Debug show all Nginx configs: "
-#    ls "${NGINX_CONFS_DIR}"
-#
-#    # Make an SSL certificate for the app.
-#    printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker\n"
-#
-#    docker exec "${NGINX_CONTAINER}" "/generate-named-ssl-cert.sh" "${NGINX_NAME}.docker"
-#
-#    # Restart the NginX services
-#    printf "Restarting NginX service.\n"
-#    docker exec centos-nginx "nginx" "-s" "reload"
-#
-#    # Add the apps domain to host PCs' hosts file
-#    printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
+    $NGINX_NAME=($NGINX_CONF_FILE -replace "${APP_WEB_ENV_DIR}\(.*\)-nginx.conf\$", '$1')
+
+    # Copy the Nginx config to the correct directory.
+    printf "making copy: "
+    cp -v "${NGINX_CONF_FILE}" "${NGINX_CONFS_DIR}/${NGINX_NAME}-nginx.conf"
+
+    printf "Debug show all Nginx configs: "
+    ls "${NGINX_CONFS_DIR}"
+
+    # Make an SSL certificate for the app.
+    printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker`n"
+
+    docker exec "${NGINX_CONTAINER}" "generate-named-ssl-cert.sh" "${NGINX_NAME}.docker"
+
+    # Restart the NginX services
+    printf "Restarting NginX service.`n"
+    docker exec "${NGINX_CONTAINER}" "nginx" "-s" "reload"
+
+    # Add the apps domain to host PCs' hosts file
+    printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.`n"
 } else {
     printf "Could not find an Nginx config at the location `"${APP_WEB_ENV_DIR}`" to copy.`n"
 }
 
 # 4. Run build steps if build script is present.
 $BUILD_SCRIPT="${APP_DIR}\bin\build.sh"
-if (!(Test-Path -Path $BUILD_SCRIPT)) {
+if (Test-Path -Path $BUILD_SCRIPT) {
     docker exec "${APP_CONTAINER}" "cd" "/code/${APP_NAME}" "&&" "./bin/build.sh"
 } else {
     printf "No build script found at the location ${BUILD_SCRIPT}.`n"
