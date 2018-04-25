@@ -8,7 +8,6 @@ Param(
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
-#$DIR = (Get-Location).Path
 
 . "$DIR\utilities.ps1"
 
@@ -53,25 +52,27 @@ if (!$env:NGINX_CONFS_DIR) {
     printf "Environment variable NGINX_CONFS_DIR is empty, setting to ${NGINX_CONFS_DIR}"
 }
 
-
 # 1. Clone the repo, if it does not already exist.
 if (!(Test-Path -Path $APP_DIR)) {
     git clone "${gitUrl}" "${APP_DIR}"
 }
 
 # 2. Setup with Nginx container.
-$APP_NGINX_CONF_DIR="${APPS_DIR}\${APP_NAME}\web-env"
 if (Test-Path -Path $APP_WEB_ENV_DIR) {
-    $NGINX_CONF_FILE=$(Get-ChildItem -Path $APP_WEB_ENV_DIR | select-string -pattern ".*-nginx.conf")
+    get-childitem $APP_WEB_ENV_DIR | where {$_-match ".*?-nginx.conf"} | % {
+        $NGINX_CONF_FILE=$_.FullName
+    }
     printf "NGINX_CONF_FILE=${NGINX_CONF_FILE}`n"
 } else {
-    printf "No NginX config for ${APP_NAME} found.`n"
+    printf "No WebEnv ${APP_WEB_ENV_DIR} directory found.`n"
 }
 
 if ($NGINX_CONF_FILE -and (Test-Path -Path $NGINX_CONF_FILE)) {
-    $NGINX_NAME=($NGINX_CONF_FILE -replace "${APP_WEB_ENV_DIR}\(.*\)-nginx.conf\$", '$1')
-
-    # Copy the Nginx config to the correct directory.
+    # Escap special chars in the path.
+    $reEscStr = [Regex]::Escape($APP_WEB_ENV_DIR)
+    # Parse the beginning of the NGinX conf file.
+    $NGINX_NAME=($NGINX_CONF_FILE -replace "${reEscStr}\\(.*?)-nginx.conf$", '$1')
+    # Copy the Nginx conf to the correct directory.
     printf "making copy: "
     cp -v "${NGINX_CONF_FILE}" "${NGINX_CONFS_DIR}/${NGINX_NAME}-nginx.conf"
 
