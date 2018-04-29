@@ -1,1 +1,1 @@
-docker-compose --project-name=marketing_web_env down
+docker-compose --project-name=web_env down
