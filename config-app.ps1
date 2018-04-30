@@ -89,7 +89,22 @@ if ($NGINX_CONF_FILE -and (Test-Path -Path $NGINX_CONF_FILE)) {
     docker exec "${NGINX_CONTAINER}" "nginx" "-s" "reload"
 
     # Add the apps domain to host PCs' hosts file
-    printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.`n"
+
+    $hostFile = "${env:WINDIR}\System32\drivers\etc\hosts"
+    printf "host file: ${hostFile}"
+    $hostsEntryFound = (cat $hostFile | where {$_-match "$NGINX_NAME`.docker"})
+    printf "host entry: ${hostsEntryFound}"
+
+    # cat C:\Windows\System32\drivers\etc\hosts | where {$_-match "local"}
+#    if ([string]::IsNullOrEmpty($hostsEntryFound)) {
+#        printf "Attempting to add ${NGINX_NAME}.docker to hosts file."
+#        echo "127.0.0.1 ${NGINX_NAME}.docker" >> $hostFile
+#        echo "::1 ${NGINX_NAME}.docker" >> $hostFile
+#        $hostsEntryFound = (Get-Content $hostFile | where {$_-match "$NGINX_NAME`.docker"})
+#    }
+    if ([string]::IsNullOrEmpty($hostsEntryFound)) {
+        printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.`n"
+    }
 } else {
     printf "Could not find an Nginx config at the location `"${APP_WEB_ENV_DIR}`" to copy.`n"
 }
