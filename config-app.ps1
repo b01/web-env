@@ -1,5 +1,7 @@
 # you may need to run, before you can use this script:
-# Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+# Try running, in an elevated PS prompt: Set-ExecutionPolicy RemoteSigned
+# - or -
+# Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 Param(
     [Parameter(Mandatory=$true)][string]$gitUrl,
