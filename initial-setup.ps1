@@ -5,45 +5,39 @@
 #
 # Add environment variables.
 
-# Check APPS_DIR environment variable is defined.
-if (!$env:APPS_DIR) {
-    $homeDrive = Split-Path -qualifier $HOME
+Param(
+    [Parameter(Mandatory=$true)][string]$appsDir
+)
 
-    printf "Home drive is ${homeDrive}`n"
+$DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
-    $networkDisk = Gwmi Win32_LogicalDisk -filter "DriveType = 4 AND DeviceID = '$homeDrive'"
+. "${DIR}\utilities.ps1"
 
-    if ($networkDisk) {
-        $APPS_DIR=$("C:\${env:USERNAME}\code")
-        printf "Home is is network drive: ${logicalDisk}`n"
-    } else {
-        $APPS_DIR="${HOME}\code"
-    }
-
-    printf "Environment variable APPS_DIR is empty, setting to ${APPS_DIR}`n"
-
-    [Environment]::SetEnvironmentVariable("APPS_DIR", $APPS_DIR, "User")
-} else {
-    $APPS_DIR = $env:APPS_DIR
+if (!$Env:APPS_DIR) {
+    setUserEnvVar 'APPS_DIR' "`"${appsDir}`""
 }
 
-# Check NGINX_CONFS_DIR environment variable is defined.
-if (!$env:NGINX_CONFS_DIR) {
-    $NGINX_CONFS_DIR="${APPS_DIR}\nginx-confs"
-    printf "Environment variable NGINX_CONFS_DIR is empty, setting to ${NGINX_CONFS_DIR}"
-    [Environment]::SetEnvironmentVariable("NGINX_CONFS_DIR", $NGINX_CONFS_DIR, "User")
+if (!$Env:NGINX_CONFS_DIR) {
+    setUserEnvVar 'NGINX_CONFS_DIR' "`"${Env:APPS_DIR}\nginx-confs`""
+}
+
+if (!$Env:SSL_DIR) {
+    setUserEnvVar "SSL_DIR" "`"${Env:APPS_DIR}\ssl`""
 }
 
 # Check DOCKER_APPS_DIR environment variable is defined.
 if (!$env:DOCKER_APPS_DIR) {
-    $DOCKER_APPS_DIR="/code"
-    printf "Environment variable DOCKER_APPS_DIR is empty, setting to ${DOCKER_APPS_DIR}"
-    [Environment]::SetEnvironmentVariable("DOCKER_APPS_DIR", $DOCKER_APPS_DIR, "User")
+    setUserEnvVar 'DOCKER_APPS_DIR' '"/code"'
 }
 
-# Check DOCKER_APPS_DIR environment variable is defined.
-if (!$env:DOCKER_APPS_DIR) {
-    $SSL_DIR="~/code/ssl"
-    printf "Environment variable SSL_DIR is empty, setting to ${SSL_DIR}"
-    [Environment]::SetEnvironmentVariable("SSL_DIR", $SSL_DIR, "User")
-}
+$getIpString = '(
+    Get-NetIPConfiguration | `
+    Where-Object { `
+        $_.IPv4DefaultGateway -ne $null `
+-and `
+#        $_.NetAdapter.Status -ne "Disconnected" `
+#    } `
+#).IPv4Address.IPAddress'
+
+setUserEnvVar "HOST_IP" $getIpString
+setUserEnvVar "XDEBUG_CONFIG" '"remote_host=${env:HOST_IP}"'
