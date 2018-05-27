@@ -1,11 +1,21 @@
-## How to Use
+# Usage
 
-1. Make and change in the "code" directory in your home directory `mkdir -p ~/code && cd ~/code`
-2. Clone this repository and change into the directory.
-2. To test, open a terminal (Powershell on windows) and run:
-   `docker-compose --project-name=compose_client_platforms up --remove-orphans`
-3. Verify that the environment is working on your PC by going to 
-   "https://127.0.0.1/" in a web browser.
-4. Now shut down the docker web environment (you'll bring it back up in a sec):
-   `docker-compose --project-name=compose_client_platforms down`
-5. Now bring the environment back up in the background.
+This documentation assumes that you are familiar enough with a Git that you know how to use a bash/Powershell terminal
+to clone a repository.
+
+## Get Started
+1. Clone this repository and change into the directory.
+
+2. Run the initial-setup command and answer the questions. You can press enter to use the default values it suggest.
+
+3. Now change to the `APPS_DIR` like so: `cd $APPS_DIR`
+
+   NOTE: if this command fails for you, you may need to logout and then log back into you account in order for the 
+   environment variable that the initial-setup command added to your user.
+
+5. Run the `start.sh` or `start.ps1` command.
+
+6. Verify that the environment is working on your PC by going to 
+   "https://127.0.0.1/" in a web browser. If that loads the default NGinX page then you are done.
+
+Next, you should review the [Command Reference](command-reference.md) manual.

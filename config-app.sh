@@ -66,15 +66,15 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
 
     # Make an SSL certificate for the app.
     printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker\n"
-
     docker exec "${NGINX_CONTAINER}" generate-named-ssl-cert.sh "${NGINX_NAME}.docker"
+
+    # TODO: Check if the hostname entry was found in the host file.
+    # Add the apps domain to host PCs' hosts file
+    printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
 
     # Restart the NginX services
     printf "Restarting NginX service.\n"
     docker exec centos-nginx nginx -s reload
-
-    # Add the apps domain to host PCs' hosts file
-    printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
 else
     printf "Could not find an Nginx config at the location \"${APP_NGINX_CONF_DIR}\" to copy.\n"
 fi
