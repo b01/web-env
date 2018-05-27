@@ -1,15 +1,12 @@
 version: '3'
 
-# Run this file with something like:
-# docker-compose --project-name=marketing_web_env up --no-recreate --remove-orphans
-
 services:
 
     memcached: # to connect use: docker exec -it centos-memcached bash
         container_name: 'centos-memcached'
         image: 'khalifahks/centos-memcached'
         networks:
-            webEnvNet:
+            envNet:
                 aliases: # assigns a hostname to the container.
                     - 'wen_memcached'
         ports:
@@ -22,7 +19,7 @@ services:
             - 'apps' # Because NginX configs will be point to this container.
             - 'apps54' # Because NginX configs will be point to this container.
         networks:
-            webEnvNet:
+            envNet:
                 aliases:
                     - 'wen_nginx'
         ports:
@@ -32,6 +29,8 @@ services:
             - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
             - "${APPS_DIR}/ssl:/etc/ssl/nginx"
+        env_file:
+            - './apps.env'
         environment:
             XDEBUG_CONFIG: "remote_host=${XDEBUG_CONFIG_IP}"
 
@@ -39,7 +38,7 @@ services:
     #     container_name: 'centos-mysql'
     #     image: 'khalifahks/centos-mysql'
     #     networks:
-    #         webEnvNet:
+    #         envNet:
     #             aliases:
     #                 - 'wen_mysql'
     #     volumes:
@@ -50,7 +49,7 @@ services:
         container_name: 'centos-apps'
         image: 'khalifahks/centos-apps'
         networks:
-            webEnvNet:
+            envNet:
                 aliases:
                     - 'wen_apps'
         volumes:
@@ -58,6 +57,8 @@ services:
         ports:
             - '9000:9000'
             - '10000:10000'
+        env_file:
+            - './apps.env'
         environment:
             XDEBUG_CONFIG: "remote_host=${XDEBUG_CONFIG_IP}"
 
@@ -66,16 +67,18 @@ services:
         container_name: 'centos-apps54'
         image: 'khalifahks/centos-apps:54'
         networks:
-            webEnvNet:
+            envNet:
                 aliases:
                     - 'wen_apps54'
         volumes:
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
         ports:
-            - '9000:9000'
-            - '10000:10000'
+            - '11000:11000'
+            - '12000:12000'
+        env_file:
+            - './apps.env'
         environment:
             XDEBUG_CONFIG: "remote_host=${XDEBUG_CONFIG_IP}"
 
 networks:
-    webEnvNet:
+    envNet:

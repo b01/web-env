@@ -3,11 +3,17 @@
 # Directory of this script.
 DIR=$( cd "$( dirname "$0" )" && pwd )
 
+# Check APPS_DIR environment variable is defined.
+if [ -z "${APPS_DIR}" ]; then
+    printf "APPS_DIR is empty, setting to default ~/code\n"
+    APPS_DIR=$(echo "${HOME}/code")
+fi
+
 # $1 = URL of a Git repository.
 # $2 = )(centos-apps|centos-apps54)
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
 APP_NAME=$(echo "${1}" | perl -pe 's#.+?/(.+?).git$#\1#g')
-WEB_ENV_DIR=$(echo "${HOME}/code/${APP_NAME}/web-env/")
+WEB_ENV_DIR=$(echo "${APPS_DIR}/${APP_NAME}/web-env/")
 
 printf "Spinning up ${APP_NAME}\n"
 
@@ -23,16 +29,10 @@ if [ ! -z "${3}" ]; then
     NGINX_CONTAINER="${3}"
 fi
 
-# Check APPS_DIR environment variable is defined.
-if [ -z "${APPS_DIR}" ]; then
-    printf "APPS_DIR is empty, setting to default ~/code\n"
-    APPS_DIR=$(echo "${HOME}/code")
-fi
-
 # Check NGINX_CONFS_DIR environment variable is defined.
 if [ -z "${NGINX_CONFS_DIR}" ]; then
-    printf "NGINX_CONFS_DIR is empty, setting to default ~/code/nginx-confs\n"
-    NGINX_CONFS_DIR=$(echo "${HOME}/code/nginx-confs")
+    printf "NGINX_CONFS_DIR is empty, setting to default ${APPS_DIR}/nginx-confs\n"
+    NGINX_CONFS_DIR=$(echo "${APPS_DIR}/nginx-confs")
 fi
 
 # 1.a Change to the docker apps dir.
@@ -45,7 +45,7 @@ if [ ! -d "${APP_NAME}" ]; then
 fi
 
 # 3. Setup with Nginx container.
-APP_NGINX_CONF_DIR="${HOME}/code/${APP_NAME}/web-env"
+APP_NGINX_CONF_DIR="${APPS_DIR}/${APP_NAME}/web-env"
 { # try
     NGINX_CONF_FILE=$(find "${APP_NGINX_CONF_DIR}" -name "*-nginx.conf")
 } || { # catch
@@ -74,29 +74,40 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
 
     # Restart the NginX services
     printf "Restarting NginX service.\n"
-    docker exec centos-nginx nginx -s reload
+    docker exec "${NGINX_CONTAINER}" nginx -s reload
+
 else
     printf "Could not find an Nginx config at the location \"${APP_NGINX_CONF_DIR}\" to copy.\n"
 fi
 
-# 4. Run build steps if build script is present.
-BUILD_SCRIPT="${APP_NAME}/bin/build.sh"
-if [ -f "${BUILD_SCRIPT}" ]; then
-    docker exec "${APP_CONTAINER}" cd /code/"${APP_NAME}" && ./bin/build.sh
-else
-    printf "No build script found at the location ${BUILD_SCRIPT}.\n"
-fi
-
-# 5. Copy environment variables.
-ENV_FILE="${WEB_ENV_DIR}/env_vars.txt"
+# 4. Copy environment variables.
+ENV_FILE="${WEB_ENV_DIR}/env-vars.txt"
 if [ -f "${ENV_FILE}" ]; then
-    docker cp "${DIR}"/../resources/append-vars.sh "${APP_CONTAINER}":/root/append-vars.sh
+    printf "Copying ${APP_NAME} environement variables over to "${APP_CONTAINER}".\n"
+    E_FILE="${DIR}/${APP_NAME}-env-vars.txt"
+    rm -rf "${E_FILE}"
+    touch "${E_FILE}"
+
+    while read -r line || [[ $line ]]; do
+        echo "export ${line}=\"${!line}\"" >> "${E_FILE}"
+    done < "${ENV_FILE}"
+
+    docker cp "${E_FILE}" "${APP_CONTAINER}":/root/env-vars.txt
+    docker exec "${APP_CONTAINER}" chown -R root:root /root/env-vars.txt
+
+    docker cp "${DIR}"/resources/append-vars.sh "${APP_CONTAINER}":/root/append-vars.sh
     docker exec "${APP_CONTAINER}" chown -R root:root /root/append-vars.sh
     docker exec "${APP_CONTAINER}" chmod a+x /root/append-vars.sh
-
-    docker cp "${ENV_FILE}" centos-apps:/root/env_vars
-    docker exec "${APP_CONTAINER}" chown -R root:root /root/env_vars
-    docker exec -i "${APP_CONTAINER}" ls -la /root
     docker exec -i "${APP_CONTAINER}" /root/append-vars.sh
-    printf "Copied ENV vars.\n"
+    printf "Copied ${APP_NAME} ENV vars to "${APP_CONTAINER}".\n"
+    rm "${E_FILE}"
+fi
+
+# 5. Run build steps if build script is present.
+BUILD_SCRIPT="${APP_NAME}/bin/build.sh"
+if [ -f "${BUILD_SCRIPT}" ]; then
+    printf "Running ${APP_NAME} build script on ${APP_CONTAINER} container.\n"
+    docker exec --user "root" "${APP_CONTAINER}" bash -c "source ~/.bashrc && cd /code/${APP_NAME} && ./bin/build.sh"
+else
+    printf "No build script found at the location ${BUILD_SCRIPT}.\n"
 fi

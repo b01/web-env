@@ -24,7 +24,6 @@ $APP_NAME=($gitUrl -replace ".+?/(.+?).git$",'$1')
 printf "Spinning up ${APP_NAME}`n"
 #Get-ChildItem Env: | Sort Name
 
-
 # Check APPS_DIR environment variable is defined.
 if (!$env:APPS_DIR) {
     $homeDrive = Split-Path -qualifier $HOME
