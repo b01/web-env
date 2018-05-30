@@ -10,15 +10,24 @@ function printf () {
 }
 
 function setUserEnvVar() {
-    param($envName, $envVal, $level = "User")
+    param($envName, $envVal, $quote=$true, $expand=$false)
 
-    Write-Output "Setting ${envName} = ${envVal}`n"
+    $envValue = $envVal
+    $runtimeVal = $envVal
+
+    if ($quote -eq $true) {
+        $envValue = "`"${envVal}`""
+    }
+
+    if ($expand -eq $true) {
+        $runtimeVal = Invoke-Expression -Command $envVal
+    }
+
+    Write-Output "Setting ${envName} = ${runtimeVal}`n"
 
     # Add the environement variable to every seesion.
-    $Env:envName = $envValue
+    Set-Item "Env:${envName}" "${runtimeVal}"
 
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:${envName} = ${envVal}"
-
-    # Persist the value in the chosen profile.
-    [Environment]::SetEnvironmentVariable($envName, $envVal, $level)
+    # Persist the value in the user profile.
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:${envName} = ${envValue}"
 }

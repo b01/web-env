@@ -6,38 +6,41 @@
 # Add environment variables.
 
 Param(
-    [Parameter(Mandatory=$true)][string]$appsDir
+    [Parameter(Mandatory=$false)][string]$appsDir = (Read-Host -Prompt "Set APPS_DIR (default = ${Env:USERPROFILE}\code )")
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "${DIR}\utilities.ps1"
 
-if (!$Env:APPS_DIR) {
-    setUserEnvVar 'APPS_DIR' "`"${appsDir}`""
+if (!$appsDir) {
+    $appsDir = "${Env:USERPROFILE}\code"
 }
 
-if (!$Env:NGINX_CONFS_DIR) {
-    setUserEnvVar 'NGINX_CONFS_DIR' "`"${Env:APPS_DIR}\nginx-confs`""
+if ($Env:HOMESHARE) {
+    $UserPsDir = "${Env:HOMESHARE}\Documents\WindowsPowerShell"
+} else {
+    $UserPsDir = "${Env:USERPROFILE}\Documents\WindowsPowerShell"
 }
 
-if (!$Env:SSL_DIR) {
-    setUserEnvVar "SSL_DIR" "`"${Env:APPS_DIR}\ssl`""
-}
+# First, lets make sure the directory exist, otherwise this script will error.
+md $UserPsDir -Force
 
-# Check DOCKER_APPS_DIR environment variable is defined.
-if (!$env:DOCKER_APPS_DIR) {
-    setUserEnvVar 'DOCKER_APPS_DIR' '"/code"'
-}
+# Add some evironment variables.
+setUserEnvVar 'APPS_DIR' $appsDir
+setUserEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
+setUserEnvVar "SSL_DIR" "${appsDir}\ssl"
+
+setUserEnvVar 'DOCKER_APPS_DIR' '/code'
 
 $getIpString = '(
     Get-NetIPConfiguration | `
     Where-Object { `
         $_.IPv4DefaultGateway -ne $null `
--and `
-#        $_.NetAdapter.Status -ne "Disconnected" `
-#    } `
-#).IPv4Address.IPAddress'
+    -and `
+        $_.NetAdapter.Status -ne "Disconnected" `
+    } `
+).IPv4Address.IPAddress'
 
-setUserEnvVar "HOST_IP" $getIpString
-setUserEnvVar "XDEBUG_CONFIG" '"remote_host=${env:HOST_IP}"'
+setUserEnvVar "HOST_IP" $getIpString $false $true
+setUserEnvVar "XDEBUG_CONFIG" 'remote_host=${env:HOST_IP}'
