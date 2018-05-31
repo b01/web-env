@@ -10,3 +10,8 @@ new_tab() {
         -e "do script \"printf '\\\e]1;$TAB_NAME\\\a'; $COMMAND\" in front window" \
         -e "end tell" > /dev/null
 }
+
+snore()
+{
+    read -t $1 -u 1
+}
