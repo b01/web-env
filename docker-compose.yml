@@ -32,17 +32,18 @@ services:
         env_file:
             - './apps.env'
 
-    # mysql: # to connect use: docker exec -it centos-mysql bash
-    #     container_name: 'centos-mysql'
-    #     image: 'khalifahks/centos-mysql'
-    #     networks:
-    #         net_1:
-    #             aliases:
-    #                 - 'wen_mysql'
-    #     volumes:
-    #         - "${APPS_DIR}/mysql:/var/lib/mysql"
+    mongodb: # to connect use: docker exec -it centos-mysql bash
+        container_name: 'centos-mongodb'
+        image: 'khalifahks/centos-mongodb'
+        networks:
+            net_1:
+                aliases:
+                    - 'wen_mongodb'
+        volumes:
+            - mongoData:/var/lib/mongo
+            - mongoLog:/var/log/mongodb
 
-    # This is the docker container to login to and build your apps.
+   # This is the docker container to login to and build your apps.
     apps: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps'
         image: 'khalifahks/centos-apps'
@@ -82,3 +83,9 @@ services:
 
 networks:
     net_1:
+
+volumes:
+    mongoData:
+        external: true
+    mongoLog:
+        external: true
