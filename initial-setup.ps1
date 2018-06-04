@@ -29,7 +29,7 @@ md $UserPsDir -Force
 # Add some evironment variables.
 setUserEnvVar 'APPS_DIR' $appsDir
 setUserEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
-setUserEnvVar "SSL_DIR" "${appsDir}\ssl"
+setUserEnvVar 'SSL_DIR' "${appsDir}\ssl"
 
 setUserEnvVar 'DOCKER_APPS_DIR' '/code'
 
@@ -42,5 +42,7 @@ $getIpString = '(
     } `
 ).IPv4Address.IPAddress'
 
-setUserEnvVar "HOST_IP" $getIpString $false $true
-setUserEnvVar "XDEBUG_CONFIG" 'remote_host=${env:HOST_IP}'
+setPowerShellUserEnvVar 'HOST_IP' $getIpString $true
+setPowerShellUserEnvVar 'XDEBUG_CONFIG' '"remote_host=${HOST_IP}"'
+
+printf "`nPlease logout and then log back in order for these changes to take effect!`n"

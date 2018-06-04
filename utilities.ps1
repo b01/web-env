@@ -10,14 +10,9 @@ function printf () {
 }
 
 function setUserEnvVar() {
-    param($envName, $envVal, $quote=$true, $expand=$false)
+    param($envName, $envVal, $expand=$false)
 
-    $envValue = $envVal
     $runtimeVal = $envVal
-
-    if ($quote -eq $true) {
-        $envValue = "`"${envVal}`""
-    }
 
     if ($expand -eq $true) {
         $runtimeVal = Invoke-Expression -Command $envVal
@@ -28,6 +23,24 @@ function setUserEnvVar() {
     # Add the environement variable to every seesion.
     Set-Item "Env:${envName}" "${runtimeVal}"
 
+    # Persist the value in the chosen profile.
+    [Environment]::SetEnvironmentVariable($envName, $envVal, 'User')
+}
+
+function setPowerShellUserEnvVar() {
+    param($envName, $envVal, $expand=$false)
+
+    $runtimeVal = $envVal
+
+    if ($expand -eq $true) {
+        $runtimeVal = Invoke-Expression -Command $envVal
+    }
+
+    Write-Output "Setting ${envName} = ${runtimeVal}`n"
+
+    # Add the environement variable to every seesion.
+#    Set-Item "Env:${envName}" "${runtimeVal}"
+
     # Persist the value in the user profile.
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:${envName} = ${envValue}"
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$${envName} = ${envVal}"
 }
