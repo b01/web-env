@@ -13,6 +13,10 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "${DIR}\build-env.ps1"
 
+$errorLog = "${DIR}/error.log"
 
 #docker-compose --project-name=web_env up -d --no-recreate --remove-orphans
-docker-compose --project-name=web_env up --no-recreate --remove-orphans
+$DOCKER_COMPOSE_CMD="docker-compose --no-recreate --remove-orphans --project-name=web_env up"
+
+# Run docker compose in a new window.
+Start-Process -FilePath "powershell.exe" -Args $DOCKER_COMPOSE_CMD -Verb open -WorkingDirectory $DIR -RedirectStandardError $errorLog

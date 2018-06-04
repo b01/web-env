@@ -1,5 +1,8 @@
 # Copy ${APP_NAME} environment variables over to "${APP_CONTAINER}".\n"
 copyEnvVars () {
+    WEB_ENV_DIR=""
+    APP_NAME=""
+    APP_CONTAINER=""
     envTxtFile="${WEB_ENV_DIR}/env-vars.txt"
 
     if [ -f "${envTxtFile}" ]; then

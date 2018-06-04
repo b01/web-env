@@ -1,4 +1,7 @@
 #!/bin/bash -e
 
-cat /root/env_vars >> /root/.bashrc
-rm /root/env_vars
+cat /root/env-vars.txt >> /root/.bashrc
+source /root/.bashrc
+
+# clean-up
+rm /root/env-vars.txt

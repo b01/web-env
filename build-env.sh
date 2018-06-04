@@ -28,4 +28,8 @@ do
     echo "" >> "${APPS_ENV_FILE}"
 done
 
-printf "Done building environment variables file: ${APPS_ENV_FILE}\n"
+if [ ! -f "${APPS_ENV_FILE}" ]; then
+    printf "Could not build an apps.env file: ${APPS_ENV_FILE}\n"
+else
+    printf "Done building environment variables file: ${APPS_ENV_FILE}\n"
+fi
