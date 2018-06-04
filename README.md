@@ -8,4 +8,7 @@ Based on Docker, the WebEnv provides the necessary softwares, with the exception
 
 * Docker 17+
 
+### Recommended
+* Mac OS X (v10.12.6) with Terminal (v2.7.3) / Windows 10 with PowerShell 
+
 To get started see [How to Use Web Env](./docs/index.md)
