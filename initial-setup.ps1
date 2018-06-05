@@ -33,6 +33,7 @@ setUserEnvVar 'SSL_DIR' "${appsDir}\ssl"
 
 setUserEnvVar 'DOCKER_APPS_DIR' '/code'
 
+# TODO: Add as a PowerShell module.
 $getIpString = '(
     Get-NetIPConfiguration | `
     Where-Object { `
@@ -42,7 +43,6 @@ $getIpString = '(
     } `
 ).IPv4Address.IPAddress'
 
-setPowerShellUserEnvVar 'HOST_IP' $getIpString $true
-setPowerShellUserEnvVar 'XDEBUG_CONFIG' '"remote_host=${HOST_IP}"'
+setUserEnvVar 'HOST_IP' $getIpString $true
 
-printf "`nPlease logout and then log back in order for these changes to take effect!`n"
+printf "`n**You may need to logout and then log back in order for these changes to take effect!**`n"

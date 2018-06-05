@@ -60,7 +60,7 @@ services:
         env_file:
             - './apps.env'
         environment:
-            - XDEBUG_CONFIG
+            XDEBUG_CONFIG: "remote_host=${HOST_IP}"
 
     # This is the docker container to login to and build your apps.
     apps54: # to connect use: docker exec -it centos-apps bash
@@ -78,7 +78,7 @@ services:
         env_file:
             - './apps.env'
         environment:
-            - XDEBUG_CONFIG
+            XDEBUG_CONFIG: "remote_host=${HOST_IP}"
 
 networks:
     net_1:

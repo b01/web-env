@@ -20,27 +20,13 @@ function setUserEnvVar() {
 
     Write-Output "Setting ${envName} = ${runtimeVal}`n"
 
-    # Add the environement variable to every seesion.
+    # Add as an evironment/global variable to current sessions.
     Set-Item "Env:${envName}" "${runtimeVal}"
+    Set-Variable "${envName}" "${runtimeVal}" -Scope global
 
-    # Persist the value in the chosen profile.
+    # Persist the value in the User profile:
+    # Will show up in Environment Variables UI and $Env: drive.
     [Environment]::SetEnvironmentVariable($envName, $envVal, 'User')
-}
-
-function setPowerShellUserEnvVar() {
-    param($envName, $envVal, $expand=$false)
-
-    $runtimeVal = $envVal
-
-    if ($expand -eq $true) {
-        $runtimeVal = Invoke-Expression -Command $envVal
-    }
-
-    Write-Output "Setting ${envName} = ${runtimeVal}`n"
-
-    # Add the environement variable to every seesion.
-#    Set-Item "Env:${envName}" "${runtimeVal}"
-
-    # Persist the value in the user profile.
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$${envName} = ${envVal}"
+    # Will be available in PowerShell as a global variable.
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$${envName} = `$Env:${envName}"
 }
