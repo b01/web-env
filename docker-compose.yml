@@ -16,8 +16,8 @@ services:
         container_name: 'centos-nginx'
         image: 'khalifahks/centos-nginx'
         depends_on:
-            - 'apps' # Because NginX configs will be point to this container.
-            - 'apps54' # Because NginX configs will be point to this container.
+            - 'apps' # Because NginX configs will point to this container.
+            - 'apps54' # Because NginX configs will point to this container.
         networks:
             net_1:
                 aliases:
@@ -28,11 +28,9 @@ services:
         volumes:
             - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
-            - "${APPS_DIR}/ssl:/etc/ssl/nginx"
+            - "${SSL_DIR}:/etc/ssl/nginx"
         env_file:
             - './apps.env'
-        environment:
-            - XDEBUG_CONFIG
 
     # mysql: # to connect use: docker exec -it centos-mysql bash
     #     container_name: 'centos-mysql'
@@ -61,6 +59,7 @@ services:
             - './apps.env'
         environment:
             XDEBUG_CONFIG: "remote_host=${HOST_IP}"
+            DBGP_IDEKEY:
 
     # This is the docker container to login to and build your apps.
     apps54: # to connect use: docker exec -it centos-apps bash
@@ -73,12 +72,13 @@ services:
         volumes:
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
         ports:
-            - '11000:11000'
-            - '12000:12000'
+            - '9054:9000'
+            - '10054:10000'
         env_file:
             - './apps.env'
         environment:
             XDEBUG_CONFIG: "remote_host=${HOST_IP}"
+            DBGP_IDEKEY:
 
 networks:
     net_1:

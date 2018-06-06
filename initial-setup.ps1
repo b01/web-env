@@ -33,7 +33,6 @@ setUserEnvVar 'SSL_DIR' "${appsDir}\ssl"
 
 setUserEnvVar 'DOCKER_APPS_DIR' '/code'
 
-# TODO: Add as a PowerShell module.
 $getIpString = '(
     Get-NetIPConfiguration | `
     Where-Object { `
@@ -43,6 +42,16 @@ $getIpString = '(
     } `
 ).IPv4Address.IPAddress'
 
-setUserEnvVar 'HOST_IP' $getIpString $true
+$runtimeVal = Invoke-Expression -Command $getIpString
+
+# Will be immediately available in PowerShell as a global variable.
+Set-Variable "`$HOST_IP" $runtimeVal -Scope global
+Set-Item "Env:HOST_IP" $HOST_IP
+echo "HOST_IP = ${HOST_IP}"
+echo "Env:HOST_IP = ${Env:HOST_IP}"
+
+# Will persist in PowerShell as a global and an environment variable.
+Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$HOST_IP = ${getIpString}"
+Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:HOST_IP = `$HOST_IP"
 
 printf "`n**You may need to logout and then log back in order for these changes to take effect!**`n"
