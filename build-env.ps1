@@ -13,17 +13,17 @@ if (!$APPS_DIR) {
 
 $APPS_ENV_FILE = "${DIR}\apps.env"
 rm "${APPS_ENV_FILE}" -ErrorAction Ignore
-[IO.File]::WriteAllLines($APPS_ENV_FILE, "")
+Out-File $APPS_ENV_FILE -Encoding utf8
 
 $envFiles = Get-ChildItem "${APPS_DIR}\*\web-env\env-vars.txt"
 
 # Loop though all arguments passed to this script.
 foreach ($envFile in $envFiles) {
-    printf "# ${envFile}" >> "${APPS_ENV_FILE}"
+    printf "# ${envFile}" | Out-File $APPS_ENV_FILE -Encoding utf8 -Append
 
     foreach($line in Get-Content $envFile.ToString()) {
-        $envValue = (Get-Variable $line).Value
-        printf "${line}=`"${envValue}`"" >> "${APPS_ENV_FILE}"
+        $envValue = (Get-Item Env:$line).Value
+        printf "${line}=`"${envValue}`"" | Out-File $APPS_ENV_FILE -Encoding utf8 -Append
     }
 }
 
