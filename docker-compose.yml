@@ -61,6 +61,7 @@ services:
         environment:
             XDEBUG_CONFIG: "remote_host=${HOST_IP}"
             DBGP_IDEKEY:
+            NODE_ENV: 'development'
 
     # This is the docker container to login to and build your apps.
     apps54: # to connect use: docker exec -it centos-apps bash
@@ -80,6 +81,7 @@ services:
         environment:
             XDEBUG_CONFIG: "remote_host=${HOST_IP}"
             DBGP_IDEKEY:
+            NODE_ENV: 'development'
 
 networks:
     net_1:
