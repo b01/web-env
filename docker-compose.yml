@@ -26,7 +26,7 @@ services:
             - '80:80'
             - '443:443'
         volumes:
-            - "${NGINX_CONFS_DIR}:/etc/nginx/conf.d"
+            - "${NGINX_CONFS_DIR}:/etc/nginx/conf-docker.d"
             - "${APPS_DIR}:${DOCKER_APPS_DIR}"
             - "${SSL_DIR}:/etc/ssl/nginx"
         env_file:
