@@ -14,7 +14,7 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 . "${DIR}\utilities.ps1"
 
 
-#. "${DIR}\build-env.ps1"
+. "${DIR}\build-env.ps1"
 
 $errorLog = "${DIR}/error.log"
 $conf = '';
