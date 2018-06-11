@@ -3,6 +3,12 @@
 # - or -
 # Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
+function newWindow() {
+    param($cmd, $dir)
+
+    Start-Process -FilePath powershell.exe -Args "${cmd}" -Verb open -WorkingDirectory "${dir}"
+}
+
 function printf () {
     param($str)
 

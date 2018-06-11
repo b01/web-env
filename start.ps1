@@ -5,16 +5,16 @@
 #
 Param(
     [string]$dcFile = '', # docker compose config file.
-    [string]$cname = '' #
+    [string]$cname = '', # container to run copies on.
+    [string]$cname2 = '' # container to connect a bash terminal to.
 )
-pwd
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "${DIR}\utilities.ps1"
 
 
-. "${DIR}\build-env.ps1"
+#. "${DIR}\build-env.ps1"
 
 $errorLog = "${DIR}/error.log"
 $conf = '';
@@ -23,8 +23,17 @@ if ($dcFile) {
 }
 
 #docker-compose --project-name=web_env up -d --no-recreate --remove-orphans
-docker-compose --project-name=web_env up --no-recreate --remove-orphans
-#$DOCKER_COMPOSE_CMD="docker-compose${conf} --project-name=web_env up --no-recreate --remove-orphans"
+#docker-compose --project-name=web_env up --no-recreate --remove-orphans
+$DOCKER_COMPOSE_CMD="docker-compose${conf} --project-name=web_env up --no-recreate --remove-orphans"
 
 # Run docker compose in a new window.
-#Start-Process -FilePath "powershell.exe" -Args $DOCKER_COMPOSE_CMD -Verb open -WorkingDirectory $DIR -RedirectStandardError $errorLog
+newWindow $DOCKER_COMPOSE_CMD $DIR
+
+# Run copies command on container(s) passed in to cname variable.
+if ($cname) {
+    . "${DIR}\copies.ps1" "${cname}"
+}
+
+if ($cname2) {
+    newWindow "docker exec -it ${cname2} bash" $DIR
+}
