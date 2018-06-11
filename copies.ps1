@@ -3,38 +3,56 @@
 # - or -
 # Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
+Param(
+    [array]$containers # Allow an app container to be specified.
+)
+
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "$DIR\utilities.ps1"
 
 printf "CWD = ${DIR}`n"
 
-$sshDir = (Resolve-Path -Path "~\.ssh").Path
-echo "SSH dir: ${sshDir}"
-# Copy SSH keys over to the containers.
-if (Test-Path -Path "${sshDir}") {
-    printf "copy ssh keys to apps54`n"
-    docker cp "${sshDir}\\." centos-apps54:/root/.ssh
-
-    printf "copy ssh keys to apps`n"
-    docker cp "${sshDir}\\." centos-apps:/root/.ssh
-
-    docker exec centos-apps54 chown -R root:root /root/.ssh/
-    docker exec centos-apps chown -R root:root /root/.ssh/
-    printf "done copying ssh keys to container.`n"
+if (!$containers) {
+    $containers = "centos-apps54","centos-apps"
 }
 
-# Copy ~/gitconfig over to app containers.
-$gitConfig = (Resolve-Path -Path "~/.gitconfig").Path
+function copySshKeysToContainer() {
+    param($sshDir, $container)
 
-if (Test-Path -Path $gitConfig) {
-    printf "copy ${gitConfig} to apps54...`n"
-    docker cp "${gitConfig}" centos-apps54:/root/.gitconfig
+    printf "copy ssh keys to ${container} container"
+    docker cp "${sshDir}\\." "${container}:/root/.ssh"
 
-    printf "copy ${gitConfig} to apps...`n"
-    docker cp "${gitConfig}" centos-apps:/root/.gitconfig
+    printf " and change permissions."
+    docker exec "${container}" chown -R root:root /root/.ssh/
 
-    printf "Changing permissions on the files copied over...`n"
-    docker exec centos-apps54 chown -R root:root /root/.gitconfig
-    docker exec centos-apps chown -R root:root /root/.gitconfig
+    printf " Completed.`n"
+}
+
+function copyGitConfigToContainer() {
+    param($gitConfig, $container)
+
+    printf "copy git configuration to ${container} container"
+    docker cp "${gitConfig}" "${container}:/root/.gitconfig"
+
+    printf " and change permissions."
+    docker exec "${container}" chown -R root:root /root/.gitconfig
+
+    printf " Completed.\n"
+}
+
+# Constants
+$SSH_DIR=(Resolve-Path -Path "~\.ssh").Path
+$GIT_CONF_FILE=$(Resolve-Path "~/.gitconfig").Path
+
+# Loop though all arguments passed to this script.
+foreach ($val in $containers) {
+    if ($sshDir) {
+        copySshKeysToContainer "${SSH_DIR}" "${val}"
+    }
+
+    # Copy ~/gitconfig over to app containers.
+    if ($GIT_CONF_FILE) {
+        copyGitConfigToContainer "${GIT_CONF_FILE}" "${val}"
+    }
 }
