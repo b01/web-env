@@ -39,6 +39,8 @@ services:
             net_1:
                 aliases:
                     - 'wen_mongodb'
+        ports:
+            - '27017:27017'
         volumes:
             - mongoData:/var/lib/mongo
             - mongoLog:/var/log/mongodb
