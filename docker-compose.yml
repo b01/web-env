@@ -38,7 +38,7 @@ services:
         networks:
             net_1:
                 aliases:
-                    - 'wen_mongodb'
+                    - 'web_mongodb'
         ports:
             - '27017:27017'
         volumes:
