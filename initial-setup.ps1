@@ -30,6 +30,7 @@ md $UserPsDir -Force
 setUserEnvVar 'APPS_DIR' $appsDir
 setUserEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
 setUserEnvVar 'SSL_DIR' "${appsDir}\ssl"
+setUserEnvVar 'BACKUP_DIR' "${appsDir}\backup"
 
 setUserEnvVar 'DOCKER_APPS_DIR' '/code'
 

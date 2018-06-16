@@ -32,7 +32,7 @@ services:
         env_file:
             - './apps.env'
 
-    mongodb: # to connect use: docker exec -it centos-mysql bash
+    mongodb: # to connect use: docker exec -it centos-mongodb bash
         container_name: 'centos-mongodb'
         image: 'khalifahks/centos-mongodb'
         networks:
@@ -45,7 +45,26 @@ services:
             - mongoData:/var/lib/mongo
             - mongoLog:/var/log/mongodb
 
-   # This is the docker container to login to and build your apps.
+    mongodbsupport: # to connect use: docker exec -it centos-mongodb-support bash
+        container_name: 'centos-mongodb-support'
+        image: 'khalifahks/centos-mongodb-support'
+        depends_on:
+            - 'mongodb'
+        networks:
+            net_1:
+                aliases:
+                    - 'web_mongodb'
+        volumes:
+            - mongoData:/var/lib/mongo
+            - mongoLog:/var/log/mongodb
+            - "${BACKUP_DIR}:/var/lib/mongodb-backup"
+        environment:
+            MONGO_HOST: 'web_mongodb'
+            MONGO_USER:
+            MONGO_PASS:
+            MONGO_ADMIN_DB:
+
+   # This is the docker container to log into and build your apps.
     apps: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps'
         image: 'khalifahks/centos-apps'
@@ -65,7 +84,7 @@ services:
             DBGP_IDEKEY:
             NODE_ENV: 'development'
 
-    # This is the docker container to login to and build your apps.
+    # This is the docker container to log into and build your apps.
     apps54: # to connect use: docker exec -it centos-apps bash
         container_name: 'centos-apps54'
         image: 'khalifahks/centos-apps:54'
