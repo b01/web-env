@@ -11,8 +11,6 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "$DIR\utilities.ps1"
 
-printf "CWD = ${DIR}`n"
-
 if (!$containers) {
     $containers = "centos-apps54","centos-apps"
 }
@@ -38,16 +36,20 @@ function copyGitConfigToContainer() {
     printf " and change permissions."
     docker exec "${container}" chown -R root:root /root/.gitconfig
 
-    printf " Completed.\n"
+    printf " Completed.`n"
 }
 
 # Constants
 $SSH_DIR=(Resolve-Path -Path "~\.ssh").Path
-$GIT_CONF_FILE=$(Resolve-Path "~/.gitconfig").Path
+$GIT_CONF_FILE=$(Resolve-Path "~\.gitconfig").Path
+
+printf "CWD = ${DIR}`n"
+printf "SSH_DIR = ${SSH_DIR}`n"
+printf "GIT_CONF_FILE = ${GIT_CONF_FILE}`n"
 
 # Loop though all arguments passed to this script.
 foreach ($val in $containers) {
-    if ($sshDir) {
+    if ($SSH_DIR) {
         copySshKeysToContainer "${SSH_DIR}" "${val}"
     }
 
