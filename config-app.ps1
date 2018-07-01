@@ -19,10 +19,9 @@ printf "CWD = ${DIR}`n"
 # $2 = (centos-apps|centos-apps54)
 # $3 = (centos-nginx)
 # 1. Parse the app name, for ex: git@github.com:b01/web-env.git => web-env
-$APP_NAME=($gitUrl -replace ".+?/(.+?).git$",'$1')
+$APP_NAME=($gitUrl -replace '.+\/(.+?).git$','$1')
 
 printf "Spinning up ${APP_NAME}`n"
-#Get-ChildItem Env: | Sort Name
 
 # Check APPS_DIR environment variable is defined.
 if (!$env:APPS_DIR) {
@@ -92,17 +91,8 @@ if ($NGINX_CONF_FILE -and (Test-Path -Path $NGINX_CONF_FILE)) {
     # Add the apps domain to host PCs' hosts file
 
     $hostFile = "${env:WINDIR}\System32\drivers\etc\hosts"
-    printf "host file: ${hostFile}"
     $hostsEntryFound = (cat $hostFile | where {$_-match "$NGINX_NAME`.docker"})
-    printf "host entry: ${hostsEntryFound}"
 
-    # cat C:\Windows\System32\drivers\etc\hosts | where {$_-match "local"}
-#    if ([string]::IsNullOrEmpty($hostsEntryFound)) {
-#        printf "Attempting to add ${NGINX_NAME}.docker to hosts file."
-#        echo "127.0.0.1 ${NGINX_NAME}.docker" >> $hostFile
-#        echo "::1 ${NGINX_NAME}.docker" >> $hostFile
-#        $hostsEntryFound = (Get-Content $hostFile | where {$_-match "$NGINX_NAME`.docker"})
-#    }
     if ([string]::IsNullOrEmpty($hostsEntryFound)) {
         printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.`n"
     }
