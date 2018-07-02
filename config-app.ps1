@@ -85,9 +85,9 @@ if ($NGINX_CONF_FILE -and (Test-Path -Path $NGINX_CONF_FILE)) {
     docker exec "${NGINX_CONTAINER}" "generate-named-ssl-cert.sh" "${NGINX_NAME}.docker"
 
     # Restart the NginX services
-    printf "Restarting NginX service.`n"
+    printf "Restarting NginX service..."
     docker exec "${NGINX_CONTAINER}" "nginx" "-s" "reload"
-
+    printf "done`n"
     # Add the apps domain to host PCs' hosts file
 
     $hostFile = "${env:WINDIR}\System32\drivers\etc\hosts"
