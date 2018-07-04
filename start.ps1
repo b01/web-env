@@ -28,6 +28,20 @@ $DOCKER_COMPOSE_CMD="docker-compose${conf} --project-name=web_env up --no-recrea
 
 # Run docker compose in a new window.
 newWindow $DOCKER_COMPOSE_CMD $DIR
+$maxWait = 30
+$val = 0
+while($val -lt $maxWait) {
+    $isUp=$(docker ps | where {$_-match "Up.*${cname}"})
+
+    if ($isUp) {
+        printf "container is up"
+        $val = $maxWait
+    }
+
+    $val++
+    printf "${val}."
+    Start-Sleep -Seconds 1
+}
 
 # Run copies command on container(s) passed in to cname variable.
 if ($cname) {
@@ -35,5 +49,5 @@ if ($cname) {
 }
 
 if ($cname2) {
-    newWindow "docker exec -it ${cname2} bash" $DIR
+    newWindow "docker exec -it ${cname2} sh" $DIR
 }

@@ -6,7 +6,7 @@
 function newWindow() {
     param($cmd, $dir)
 
-    Start-Process -FilePath powershell.exe -Args "${cmd}" -Verb open -WorkingDirectory "${dir}"
+    Start-Process -FilePath powershell.exe -Args "${cmd} ; pause" -Verb open -WorkingDirectory "${dir}"
 }
 
 function printf () {
