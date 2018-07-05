@@ -42,7 +42,7 @@ services:
         ports:
             - '27017:27017'
         volumes:
-            - mongoData:/var/lib/mongo
+            - mongoData:/var/lib/mongodb
             - mongoLog:/var/log/mongodb
 
     mongodbsupport: # to connect use: docker exec -it centos-mongodb-support bash
@@ -55,7 +55,7 @@ services:
                 aliases:
                     - 'web_mongodb'
         volumes:
-            - mongoData:/var/lib/mongo
+            - mongoData:/var/lib/mongodb
             - mongoLog:/var/log/mongodb
             - "${BACKUP_DIR}:/var/lib/mongodb-backup"
         environment:
