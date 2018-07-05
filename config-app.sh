@@ -10,7 +10,7 @@ if [ -z "${APPS_DIR}" ]; then
 fi
 
 # $1 = URL of a Git repository.
-# $2 = )(centos-apps|centos-apps54)
+# $2 = (alpine-apps|alpine-apps54)
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
 APP_NAME=$(echo "${1}" | perl -pe 's#.+?/(.+?).git$#\1#g')
 WEB_ENV_DIR=$(echo "${APPS_DIR}/${APP_NAME}/web-env/")
@@ -18,13 +18,13 @@ WEB_ENV_DIR=$(echo "${APPS_DIR}/${APP_NAME}/web-env/")
 printf "Spinning up ${APP_NAME}\n"
 
 # Allow an app container to be specified.
-APP_CONTAINER="centos-apps"
+APP_CONTAINER="alpine-apps"
 if [ ! -z "${2}" ]; then
     APP_CONTAINER="${2}"
 fi
 
 # Allow an nginx container to be specified.
-NGINX_CONTAINER="centos-nginx"
+NGINX_CONTAINER="alpine-nginx"
 if [ ! -z "${3}" ]; then
     NGINX_CONTAINER="${3}"
 fi
