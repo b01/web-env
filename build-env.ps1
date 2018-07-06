@@ -4,7 +4,6 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "${DIR}\utilities.ps1"
 
-
 if (!$APPS_DIR) {
     printf "APPS_DIR environment variable is not set, please set it before running this command.`n"
     printf "Did you forget to run the `"initial-setup.ps1`" command?`n"

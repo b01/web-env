@@ -2,9 +2,9 @@ version: '3'
 
 services:
 
-    memcached: # to connect use: docker exec -it centos-memcached bash
-        container_name: 'centos-memcached'
-        image: 'khalifahks/centos-memcached'
+    memcached: # to connect use: docker exec -it alpine-memcached sh
+        container_name: 'alpine-memcached'
+        image: 'khalifahks/alpine-memcached'
         networks:
             net_1:
                 aliases: # assigns a hostname to the container.
