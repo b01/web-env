@@ -9,7 +9,9 @@ source "${DIR}"/flags.sh
 
 "${DIR}"/build-env.sh
 
-#docker-compose --project-name=web_env up -d --no-recreate --remove-orphans
+docker volume create mongoData
+docker volume create mongoLog
+
 DOCKER_COMPOSE_CMD='docker-compose --project-name=web_env up --no-recreate --remove-orphans'
 
 if [ -n "${dcFile}" ]; then
