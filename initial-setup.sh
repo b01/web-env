@@ -79,3 +79,6 @@ if [ ! "${#addedEnvVar[@]}" -eq 0 ]; then
     printf "New environment variables were added: ${addedEnvVar}, if you want them to take effect, please close all terminals and open again.\n"
     printf "${addedEnvVar}.\n"
 fi
+
+#link short-cut
+ln "${APPS_DIR}/web-env/web-env.sh" /usr/local/bin/webenv
