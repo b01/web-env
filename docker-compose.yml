@@ -12,11 +12,11 @@ services:
         ports:
             - '11211:11211'
 
-    nginx: # to connect use: docker exec -it centos-nginx bash
+    nginx: # to connect use: docker exec -it alpine-nginx bash
         container_name: 'alpine-nginx'
         image: 'khalifahks/alpine-nginx'
         depends_on:
-            - 'apps' # Because NginX configs will point to this container.
+            - 'apps' # Because NGinX configs will point to this container.
         networks:
             net_1:
                 aliases:
@@ -31,7 +31,7 @@ services:
         env_file:
             - './apps.env'
 
-    mongodb: # to connect use: docker exec -it centos-mongodb bash
+    mongodb: # to connect use: docker exec -it alpine-mongodb bash
         container_name: 'alpine-mongodb'
         image: 'khalifahks/alpine-mongodb'
         networks:
@@ -44,7 +44,7 @@ services:
             - mongoData:/var/lib/mongodb
             - mongoLog:/var/log/mongodb
 
-    mongodbsupport: # to connect use: docker exec -it centos-mongodb-support bash
+    mongodbsupport: # to connect use: docker exec -it alpine-mongodb-support bash
         container_name: 'alpine-mongodb-support'
         image: 'khalifahks/alpine-mongodb-support'
         depends_on:
@@ -64,7 +64,7 @@ services:
             MONGO_ADMIN_DB:
 
    # This is the docker container to log into and build your apps.
-    apps: # to connect use: docker exec -it centos-apps bash
+    apps: # to connect use: docker exec -it alpine-apps bash
         container_name: 'alpine-apps'
         image: 'khalifahks/alpine-apps'
         networks:
