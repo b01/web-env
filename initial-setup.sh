@@ -70,6 +70,11 @@ fi
 addedEnvVar+=("BACKUP_DIR")
 addUserEnvVar 'BACKUP_DIR' "${APPS_DIR}/backup"
 
+if [ -z "${HOST_IP}" ]; then
+    addedEnvVar+=("HOST_IP")
+    addUserEnvVar 'HOST_IP' '$(ipconfig getifaddr en0)'
+fi
+
 if [ ! "${#addedEnvVar[@]}" -eq 0 ]; then
     printf "New environment variables were added: ${addedEnvVar}, if you want them to take effect, please close all terminals and open again.\n"
     printf "${addedEnvVar}.\n"
