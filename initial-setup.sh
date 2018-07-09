@@ -81,4 +81,4 @@ if [ ! "${#addedEnvVar[@]}" -eq 0 ]; then
 fi
 
 #link short-cut
-ln "${APPS_DIR}/web-env/web-env.sh" /usr/local/bin/webenv
+ln -s "${APPS_DIR}/web-env/web-env.sh" /usr/local/bin/webenv
