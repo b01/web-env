@@ -15,6 +15,11 @@ fi
 # $2 optional = (alpine-apps|alpine-apps54)
 # $3 optional = (alpine-nginx)
 
+if [ -z "${1}" ]; then
+    printf "Missing the required first parameter which should a git repository. Exiting.\n"
+    exit 1
+fi
+
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
 APP_NAME=$(echo "${1}" | perl -pe 's#.+\/(.+?).git$#\1#g')
 WEB_ENV_DIR=$(echo "${APPS_DIR}/${APP_NAME}/web-env/")
