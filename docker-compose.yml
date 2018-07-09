@@ -43,6 +43,13 @@ services:
         volumes:
             - mongoData:/var/lib/mongodb
             - mongoLog:/var/log/mongodb
+            - "${BACKUP_DIR}:/var/lib/mongodb-backup"
+        environment:
+            MONGO_HOST: 'web_mongodb'
+            MONGO_USER:
+            MONGO_PASS:
+            MONGO_ADMIN_DB:
+            MONGO_DKR_BKUP_DIR:
 
     mongodbsupport: # to connect use: docker exec -it alpine-mongodb-support bash
         container_name: 'alpine-mongodb-support'
