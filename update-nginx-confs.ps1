@@ -15,7 +15,7 @@ printf "CWD = ${DIR}`n"
 
 # Copy all applications nginx files into the mapped NginX vhost configuration directory.
 printf "Copying NginX configs over to mapped container ${container} directory.`n"
-cp -v ~\code\*\web-env\*.conf ~\code\nginx-confs\
+cp -v "${APPS_DIR}"\*\web-env\*.conf ~\code\nginx-confs\
 
 printf "Restarting NginX service.`n"
 docker exec "${container}" nginx -s reload
