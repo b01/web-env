@@ -5,35 +5,49 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 
 # Check APPS_DIR environment variable is defined.
 if [ -z "${APPS_DIR}" ]; then
-    printf "APPS_DIR is empty, setting to default ~/code\n"
-    APPS_DIR=$(echo "${HOME}/code")
+    printf "Please set the APPS_DIR environment variable before using WebEnv tool. Exiting.\n"
+    exit 1
 fi
 
+# Parameters to this script:
+# --
 # $1 = URL of a Git repository.
-# $2 = (alpine-apps|alpine-apps54)
+# $2 optional = (alpine-apps|alpine-apps54)
+# $3 optional = (alpine-nginx)
+
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
-APP_NAME=$(echo "${1}" | perl -pe 's#.+?/(.+?).git$#\1#g')
+APP_NAME=$(echo "${1}" | perl -pe 's#.+\/(.+?).git$#\1#g')
 WEB_ENV_DIR=$(echo "${APPS_DIR}/${APP_NAME}/web-env/")
 
 printf "Spinning up ${APP_NAME}\n"
+printf "...\n"
 
 # Allow an app container to be specified.
 APP_CONTAINER="alpine-apps"
 if [ ! -z "${2}" ]; then
     APP_CONTAINER="${2}"
 fi
+printf "Using app container: ${APP_CONTAINER}\n"
 
 # Allow an nginx container to be specified.
 NGINX_CONTAINER="alpine-nginx"
 if [ ! -z "${3}" ]; then
     NGINX_CONTAINER="${3}"
 fi
+printf "Using NGinX container: ${NGINX_CONTAINER}\n"
+
+# Check $CMP_HOST_FILE environment variable is defined.
+CMP_HOST_FILE="/private/etc/hosts"
+if [ -z "${4}" ]; then
+    CMP_HOST_FILE=$4
+fi
+printf "Using hosts file: ${CMP_HOST_FILE}\n"
 
 # Check NGINX_CONFS_DIR environment variable is defined.
 if [ -z "${NGINX_CONFS_DIR}" ]; then
-    printf "NGINX_CONFS_DIR is empty, setting to default ${APPS_DIR}/nginx-confs\n"
     NGINX_CONFS_DIR=$(echo "${APPS_DIR}/nginx-confs")
 fi
+printf "Using NGinX config directory: ${NGINX_CONFS_DIR}\n"
 
 # 1.a Change to the docker apps dir.
 cd "${APPS_DIR}"
@@ -42,6 +56,8 @@ printf "CWD: " && pwd
 # 2. Clone the repo, if it does not already exist.
 if [ ! -d "${APP_NAME}" ]; then
     git clone "${1}"
+else
+    printf "Directory found ${APP_NAME}. Skipping git clone process.\n"
 fi
 
 # 3. Setup with Nginx container.
@@ -68,9 +84,12 @@ if [ -f "${NGINX_CONF_FILE}" ]; then
     printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker\n"
     docker exec "${NGINX_CONTAINER}" generate-named-ssl-cert.sh "${NGINX_NAME}.docker"
 
+    nginxConfigFound=$(cat $CMP_HOST_FILE | grep "${NGINX_NAME}.docker")
     # TODO: Check if the hostname entry was found in the host file.
-    # Add the apps domain to host PCs' hosts file
-    printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
+    if [ -z "${nginxConfigFound}" ]; then
+        # Add the apps domain to host PCs' hosts file
+        printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
+    fi
 
     # Restart the NginX services
     printf "Restarting NginX service.\n"
