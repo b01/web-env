@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -e
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
 CWD=$(pwd)
@@ -22,22 +22,31 @@ printf "Starting web Docker environment in a new terminal Window.\n"
 new_tab "WebEnv Monitor" "cd ${CWD} && ${DOCKER_COMPOSE_CMD}"
 
 # "i" controls home many seconds this loop runs, as snore will sleep for 1 second each iteration.
-i=10
+i=1
+isUp=''
 printf "waiting for ${cname} to start "
-while ((i--)); do
-    isUp=$(docker ps | grep "Up.*${cname}")
+while [ $i -lt 10 ]; do
+    (( i++ ))
 
     printf "."
+
+    isUp=$(docker ps -aq -f "name=${cname}" -f "status=running")
 
     if [ -n "${isUp}" ]; then
         break
     fi
 
-    snore 1
+    sleep 1
 done
 printf " done\n"
 
 # Run copies command on container(s) passed in to cname variable.
-if [ -n "${cname}" ]; then
+if [ -n "${isUp}" ]; then
     source "${DIR}/copies.sh" "${cname}"
+fi
+
+container=$(docker ps -aq -f "name=${iaterm}" -f "status=running")
+if [ -n "${container}" ]; then
+    printf "Open a new terminal window to the docker container ${iaterm}.\n"
+    new_tab "Docker ${iaterm}" "docker exec -it ${container} sh"
 fi

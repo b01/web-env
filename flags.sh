@@ -35,6 +35,16 @@ while test $# -gt 0; do
                         fi
                         shift
                         ;;
+                -n)
+                        shift
+                        if test $# -gt 0; then
+                                export iaterm=$1
+                        else
+                                echo "no container name specified"
+                                exit 1
+                        fi
+                        shift
+                        ;;
                 *)
                         break
                         ;;
