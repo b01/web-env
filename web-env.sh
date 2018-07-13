@@ -12,11 +12,11 @@ case $1 in
     cp)
         command="copies"
         ;;
-    start)
-        command=$1
+    up)
+        command="start"
         ;;
-    stop)
-        command=$1
+    dn)
+        command="stop"
         ;;
     *)
         echo "Unknown command: ${1}. Please use one of the following:"
