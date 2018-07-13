@@ -31,7 +31,9 @@ setUserEnvVar 'APPS_DIR' $appsDir
 setUserEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
 setUserEnvVar 'SSL_DIR' "${appsDir}\ssl"
 setUserEnvVar 'BACKUP_DIR' "${appsDir}\backup"
-setUserEnvVar 'MONGO_DKR_BKUP_DIR' "/var/lib/mongodb-backup"
+setUserEnvVar 'MONGO_DKR_BKUP_DIR' '/var/lib/mongodb-backup'
+setUserEnvVar 'MONGO_DKR_DATA_DIR' '/var/lib/mongodb'
+setUserEnvVar 'MONGO_DKR_LOG_DIR' '/var/log/mongodb'
 
 setUserEnvVar 'DOCKER_APPS_DIR' '/code'
 

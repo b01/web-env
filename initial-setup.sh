@@ -70,6 +70,8 @@ fi
 addedEnvVar+=("BACKUP_DIR")
 addUserEnvVar 'BACKUP_DIR' "${APPS_DIR}/backup"
 addUserEnvVar 'MONGO_DKR_BKUP_DIR' '/var/lib/mongodb-backup'
+addUserEnvVar 'MONGO_DKR_DATA_DIR' '/var/lib/mongodb'
+addUserEnvVar 'MONGO_DKR_LOG_DIR' '/var/log/mongodb'
 
 if [ -z "${HOST_IP}" ]; then
     addedEnvVar+=("HOST_IP")
