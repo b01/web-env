@@ -24,8 +24,9 @@ new_tab "WebEnv Monitor" "cd ${CWD} && ${DOCKER_COMPOSE_CMD}"
 # "i" controls home many seconds this loop runs, as snore will sleep for 1 second each iteration.
 i=1
 isUp=''
-printf "waiting for ${cname} to start "
-while [ $i -lt 10 ]; do
+
+printf "Starting web environment ..."
+while [ -n "${cname}" ] && [ $i -lt 10 ]; do
     (( i++ ))
 
     printf "."
