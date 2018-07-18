@@ -22,7 +22,7 @@ for envFile in "${envFiles[@]}"
 do
     echo "# ${envFile}" >> "${APPS_ENV_FILE}"
     while read -r line || [[ $line ]]; do
-        echo "${line}=\"${!line}\"" >> "${APPS_ENV_FILE}"
+        echo "${line}=${!line}" >> "${APPS_ENV_FILE}"
     done < "${envFile}"
 
     echo "" >> "${APPS_ENV_FILE}"
