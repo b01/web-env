@@ -12,19 +12,27 @@ if (!$APPS_DIR) {
 
 $APPS_ENV_FILE = "${DIR}\apps.env"
 rm "${APPS_ENV_FILE}" -ErrorAction Ignore
-Out-File $APPS_ENV_FILE -Encoding utf8
+Out-File $APPS_ENV_FILE -Encoding ascii
+$content = ''
 
 $envFiles = Get-ChildItem "${APPS_DIR}\*\web-env\env-vars.txt"
 
 # Loop though all arguments passed to this script.
 foreach ($envFile in $envFiles) {
-    printf "# ${envFile}" | Out-File $APPS_ENV_FILE -Encoding utf8 -Append
+    $content = "${content}# ${envFile}`n"
 
     foreach($line in Get-Content $envFile.ToString()) {
         $envValue = (Get-Item Env:$line).Value
-        printf "${line}=`"${envValue}`"" | Out-File $APPS_ENV_FILE -Encoding utf8 -Append
+
+        if ($envValue) {
+            $content = "${content}${line}=${envValue}`n"
+        } else {
+            printf "Environment variable ${line} is not set and is required for ${envFile}`n"
+        }
     }
 }
+
+Set-Content -Path $APPS_ENV_FILE -Value $content -Encoding String
 
 if ((Test-Path -Path $APPS_ENV_FILE) -eq $false) {
     printf "Could not build an apps.env file: ${APPS_ENV_FILE}`n"
