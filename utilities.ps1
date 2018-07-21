@@ -50,13 +50,13 @@ function setPsProfileVar
     param ($envName, $envVal)
 
     $exists = [bool](Get-Variable $envName -Scope "Global" -EA "Ig")
-#    $regEx = "\`$${envName} =.*"
-    $regEx = "(?>=<\`$${envName} =.*)"
+    $regEx = "\`$${envName} =.*"
+    $regExRpl = "(?>=<\`$${envName} =.*)"
 
 
     $content = (Get-Content $Profile.CurrentUserAllHosts)
     if ($content -match $regEx) {
-        regReplace $Profile.CurrentUserAllHosts $regEx $envVal
+        regReplace $Profile.CurrentUserAllHosts $regExRpl $envVal
         printf "Updated Powershell Env varaible ${envName}"
     } else {
         addPsEnvVar $envName $envVal
