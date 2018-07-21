@@ -30,15 +30,14 @@ if ($Env:HOMESHARE) {
 md $UserPsDir -Force
 
 # Add some evironment variables.
-setUserEnvVar 'APPS_DIR' $appsDir
-setUserEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
-setUserEnvVar 'SSL_DIR' "${appsDir}\ssl"
-setUserEnvVar 'BACKUP_DIR' "${appsDir}\backup"
-setUserEnvVar 'MONGO_DKR_BKUP_DIR' '/var/lib/mongodb-backup'
-setUserEnvVar 'MONGO_DKR_DATA_DIR' '/var/lib/mongodb'
-setUserEnvVar 'MONGO_DKR_LOG_DIR' '/var/log/mongodb'
-
-setUserEnvVar 'DOCKER_APPS_DIR' '/code'
+setEnvVar 'APPS_DIR' $appsDir
+setEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
+setEnvVar 'SSL_DIR' "${appsDir}\ssl"
+setEnvVar 'BACKUP_DIR' "${appsDir}\backup"
+setEnvVar 'MONGO_DKR_BKUP_DIR' '/var/lib/mongodb-backup'
+setEnvVar 'MONGO_DKR_DATA_DIR' '/var/lib/mongodb'
+setEnvVar 'MONGO_DKR_LOG_DIR' '/var/log/mongodb'
+setEnvVar 'DOCKER_APPS_DIR' '/code'
 
 $getIpString = '(
     Get-NetIPConfiguration | `
