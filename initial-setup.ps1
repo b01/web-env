@@ -13,6 +13,9 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "${DIR}\utilities.ps1"
 
+printf "Powershell version "
+$PSVersionTable.PSVersion.toString()
+
 if (!$appsDir) {
     $appsDir = "${Env:USERPROFILE}\code"
 }
@@ -46,16 +49,18 @@ $getIpString = '(
     } `
 ).IPv4Address.IPAddress'
 
-$runtimeVal = Invoke-Expression -Command $getIpString
+if (!$HOST_IP) {
+    $runtimeVal = Invoke-Expression -Command $getIpString
 
-# Will be immediately available in PowerShell as a global variable.
-Set-Variable "`$HOST_IP" $runtimeVal -Scope global
-Set-Item "Env:HOST_IP" $HOST_IP
-echo "HOST_IP = ${HOST_IP}"
-echo "Env:HOST_IP = ${Env:HOST_IP}"
+    # Will be immediately available in PowerShell as a global variable.
+    Set-Variable "`$HOST_IP" $runtimeVal -Scope global
+    Set-Item "Env:HOST_IP" $HOST_IP
+    # Will persist in PowerShell as a global and an environment variable.
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$HOST_IP = ${getIpString}"
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:HOST_IP = `$HOST_IP"
+}
 
-# Will persist in PowerShell as a global and an environment variable.
-Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$HOST_IP = ${getIpString}"
-Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:HOST_IP = `$HOST_IP"
+$webEnvDir = "${appsDir}\web-env"
+Invoke-Expression -Command "& `"${webEnvDir}\add-commands.ps1`""
 
 printf "`n**You may need to logout and then log back in order for these changes to take effect!**`n"
