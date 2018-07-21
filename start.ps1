@@ -36,7 +36,6 @@ newWindow $DOCKER_COMPOSE_CMD $DIR
 $maxWait = 30
 $val = 0
 while($val -lt $maxWait) {
-#    $isUp=$(docker ps | where {$_-match "Up.*${cname}"})
     $isUp=$(docker ps -aq -f "name=${cname}" -f "status=running")
 
     if ($isUp) {
