@@ -30,6 +30,7 @@ if ($Env:HOMESHARE) {
 md $UserPsDir -Force
 
 # Add some evironment variables.
+setEnvVar 'WEB_ENV_DIR' $DIR
 setEnvVar 'APPS_DIR' $appsDir
 setEnvVar 'NGINX_CONFS_DIR' "${appsDir}\nginx-confs"
 setEnvVar 'SSL_DIR' "${appsDir}\ssl"
@@ -49,6 +50,8 @@ $getIpString = '(
 ).IPv4Address.IPAddress'
 
 if (!$HOST_IP) {
+    printf "setting HOST_IP environment var.`n"
+
     $runtimeVal = Invoke-Expression -Command $getIpString
 
     # Will be immediately available in PowerShell as a global variable.
@@ -56,10 +59,11 @@ if (!$HOST_IP) {
     Set-Item "Env:HOST_IP" $HOST_IP
     # Will persist in PowerShell as a global and an environment variable.
     Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$HOST_IP = ${getIpString}"
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$HOST_IP2 = Get-IpString"
     Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:HOST_IP = `$HOST_IP"
 }
 
 $webEnvDir = "${appsDir}\web-env"
 Invoke-Expression -Command "& `"${webEnvDir}\add-commands.ps1`""
 
-printf "`n**You may need to logout and then log back in order for these changes to take effect!**`n"
+printf "`n**You may need to logout and then log back in order for these changes to take effect!**"

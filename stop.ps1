@@ -3,4 +3,14 @@
 # - or -
 # Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
-docker-compose --project-name=web_env down
+Param(
+    [string]$dcFile = '' # path to a a docker compose config file.
+)
+
+$DIR = split-path -parent $MyInvocation.MyCommand.Definition
+
+
+if (!$dcFile) {
+    $dcFile = "${WEB_ENV_DIR}\docker-compose.yml"
+}
+docker-compose -f "`"${dcFile}`"" --project-name=web_env down

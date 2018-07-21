@@ -16,6 +16,16 @@ function Use-Webenv
                 Write-Verbose "mapping cp to copies.`n"
                 break
             }
+            'dn' {
+                $command = 'stop'
+                Write-Verbose "mapping dn to stop.`n"
+                break
+            }
+            'up' {
+                $command = 'start'
+                Write-Verbose "mapping up to start.`n"
+                break
+            }
         }
 
         if ($command) {

@@ -4,9 +4,9 @@
 # Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 #
 Param(
-    [string]$dcFile = '', # docker compose config file.
-    [string]$cname = '', # container to run copies on.
-    [string]$cname2 = '' # container to connect a bash terminal to.
+    [string]$f = '', # path to a a docker compose config file.
+    [string]$c = '', # container to run copies on.
+    [string]$n = '' # container to connect a terminal to.
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
@@ -15,22 +15,29 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
 . "${DIR}\build-env.ps1"
 
-$errorLog = "${DIR}/error.log"
-$conf = '';
-if ($dcFile) {
-    $conf = " -f ${dcFile}"
+$dcFile = "${WEB_ENV_DIR}\docker-compose.yml"
+
+if ($f) {
+    $dcFile = "${f}"
 }
 
-#docker-compose --project-name=web_env up -d --no-recreate --remove-orphans
-#docker-compose --project-name=web_env up --no-recreate --remove-orphans
-$DOCKER_COMPOSE_CMD="docker-compose${conf} --project-name=web_env up --no-recreate --remove-orphans"
+if ($c) {
+    $cname = "${c}"
+}
+
+if ($n) {
+    $dcTerm = "${n}"
+}
+
+$DOCKER_COMPOSE_CMD="docker-compose -f `"${dcFile}`" --project-name=web_env up --no-recreate --remove-orphans"
 
 # Run docker compose in a new window.
 newWindow $DOCKER_COMPOSE_CMD $DIR
 $maxWait = 30
 $val = 0
 while($val -lt $maxWait) {
-    $isUp=$(docker ps | where {$_-match "Up.*${cname}"})
+#    $isUp=$(docker ps | where {$_-match "Up.*${cname}"})
+    $isUp=$(docker ps -aq -f "name=${cname}" -f "status=running")
 
     if ($isUp) {
         printf "container is up"
@@ -47,6 +54,6 @@ if ($cname) {
     . "${DIR}\copies.ps1" "${cname}"
 }
 
-if ($cname2) {
-    newWindow "docker exec -it ${cname2} sh" $DIR
+if ($dcTerm) {
+    newWindow "docker exec -it ${dcTerm} sh" $DIR
 }
