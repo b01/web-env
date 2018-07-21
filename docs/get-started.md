@@ -7,16 +7,21 @@
    suggest.
 
    NOTE: On Windows, its a good idea to logout and then back in before 
-         proceeding.
-3. Now change to the `APPS_DIR` like so: `cd $APPS_DIR`
+         proceeding, or just restart your PC. Though it should not be 
+         necessary, it is recommended.
 
-   NOTE: If this command fails for you, you may need to logout and then log
+3. Open a new terminal; on windows make sure its Powershell.
+
+   NOTE: This will not work in a cmd.exe terminal most of the time.
+
+4. Run the command `webenv up -c alpine-apps -n alpine-apps`, then wait and watch.
+
+   NOTE: Your waiting for the docker images to download and start running.
+         Again, if this command fails for you, you may need to logout and then log
          back into you account in order for the environment variables that the
-         initial-setup command added to your user profile.
+         initial-setup command added to your user profile to take effect.
 
-5. Run the `start.sh` or `start.ps1` command.
-
-6. Verify that the environment is working on your PC by going to 
+5. Verify that the environment is working on your PC by going to 
    "https://127.0.0.1/" in a web browser. If that loads the default NGinX page
    then you are ready to move on to the next step.
 
