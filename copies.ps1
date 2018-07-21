@@ -12,7 +12,7 @@ $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 . "$DIR\utilities.ps1"
 
 if (!$containers) {
-    $containers = "centos-apps54","centos-apps"
+    $containers = "alpine-apps"
 }
 
 function copySshKeysToContainer() {

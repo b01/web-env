@@ -32,7 +32,7 @@ SSH_DIR=$(echo ~/.ssh)
 GIT_CONF_FILE=$(echo ~/.gitconfig)
 
 # Variables
-dockerContainers=("centos-apps54" "centos-apps")
+dockerContainers=("alpine-apps")
 
 # Override variables
 if [ ! "$#" -eq 0 ]; then
