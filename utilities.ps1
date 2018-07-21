@@ -3,7 +3,7 @@
 # - or -
 # Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
-# Persist in PowerShell as a global variable.
+# Persist in PowerShell user profile script as a global variable.
 function addPsEnvVar() {
     param ($envName, $envVal)
 
