@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Directory of this script.
+DIR=$( cd "$( dirname "$0" )" && pwd )
+
 function addUserEnvVar () {
     envFile=~/.bash_profile
     envName=$1
@@ -40,7 +43,7 @@ if [ -z "${APPS_DIR}" ]; then
     appsDirDefault=~/code
 
     # Prompt the user for this value.
-    getInput "Where would you like to store your projects (default=${appsDirDefault}):" $appsDirDefault
+    getInput "Where do you store your projects (default=${appsDirDefault}):" $appsDirDefault
 
     APPS_DIR="${getInputReturn}"
 
@@ -69,9 +72,14 @@ fi
 
 addedEnvVar+=("BACKUP_DIR")
 addUserEnvVar 'BACKUP_DIR' "${APPS_DIR}/backup"
+addedEnvVar+=("MONGO_DKR_BKUP_DIR")
 addUserEnvVar 'MONGO_DKR_BKUP_DIR' '/var/lib/mongodb-backup'
+addedEnvVar+=("MONGO_DKR_DATA_DIR")
 addUserEnvVar 'MONGO_DKR_DATA_DIR' '/var/lib/mongodb'
+addedEnvVar+=("MONGO_DKR_LOG_DIR")
 addUserEnvVar 'MONGO_DKR_LOG_DIR' '/var/log/mongodb'
+addedEnvVar+=("WEB_ENV_DIR")
+addUserEnvVar 'WEB_ENV_DIR' $DIR
 
 if [ -z "${HOST_IP}" ]; then
     addedEnvVar+=("HOST_IP")

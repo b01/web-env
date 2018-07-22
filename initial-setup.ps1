@@ -6,7 +6,7 @@
 # Add environment variables.
 
 Param(
-    [Parameter(Mandatory=$false)][string]$appsDir = (Read-Host -Prompt "Set APPS_DIR (default = ${Env:USERPROFILE}\code )")
+    [Parameter(Mandatory=$false)][string]$appsDir = (Read-Host -Prompt "Where do you store your projects (default = ${Env:USERPROFILE}\code )")
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
