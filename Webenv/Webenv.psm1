@@ -5,12 +5,17 @@ function Use-Webenv
         $short = $args[0]
         $cmdParams = ''
 
-        if ($args.Length -gt 2) {
+        if ($args.Length -gt 1) {
             $cmdParams = $args[1..($args.Length - 1)]
         }
 
         switch ($short)
         {
+            'ca' {
+                $command = 'config-app'
+                Write-Verbose "mapping ca to config-app.`n"
+                break
+            }
             'cp' {
                 $command = 'copies'
                 Write-Verbose "mapping cp to copies.`n"

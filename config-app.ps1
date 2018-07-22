@@ -5,8 +5,8 @@
 
 Param(
     [Parameter(Mandatory=$true)][string]$gitUrl,
-    [string]$APP_CONTAINER = "centos-apps", # Allow an app container to be specified.
-    [string]$NGINX_CONTAINER = "centos-nginx" # Allow an nginx container to be specified.
+    [string]$APP_CONTAINER = "alpine-apps", # Allow an app container to be specified.
+    [string]$NGINX_CONTAINER = "alpine-nginx" # Allow an nginx container to be specified.
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
