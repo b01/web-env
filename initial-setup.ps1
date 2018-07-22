@@ -58,8 +58,8 @@ if (!$HOST_IP) {
     Set-Variable "`$HOST_IP" $runtimeVal -Scope global
     Set-Item "Env:HOST_IP" $HOST_IP
     # Will persist in PowerShell as a global and an environment variable.
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$HOST_IP = Get-IpString"
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`$Env:HOST_IP = `$HOST_IP"
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`n`$HOST_IP = Get-IpString"
+    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`n`$Env:HOST_IP = `$HOST_IP"
 }
 
 $webEnvDir = "${appsDir}\web-env"
