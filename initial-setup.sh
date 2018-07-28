@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # Directory of this script.
 DIR=$( cd "$( dirname "$0" )" && pwd )
@@ -14,14 +14,19 @@ function addUserEnvVar () {
 
     fileContents=$(cat "${envFile}")
 
-    case "${fileContents}" in
-        *"${envName}"* ) hasVar="yes";;
-        * ) hasVar="";;
-    esac
+    hasVar=$(echo "${fileContents}" | grep -c --color=never -E "^export\s+${envName}")
 
-    if [ -z "${hasVar}" ]; then
-        echo "export ${envName}=${envValue}" >> "${envFile}"
+    if [ "${hasVar}" = "0" ]; then
+        printf "export ${envName}=${envValue}\n" >> "${envFile}"
+        printf "Added ${envName} to environment\n"
+    else
+        searchTerm="^export ${envName}.*"
+        replacement="export ${envName}=${envValue}"
+        sed -E -i 'bash_profile.bak' "s|${searchTerm}|${replacement}|g" "${envFile}"
+        printf "Updated environment variable ${envName}\n"
     fi
+
+    export "${envName}=${envValue}"
 }
 
 function getInput() {
@@ -36,60 +41,36 @@ function getInput() {
     fi
 }
 
-addedEnvVar=()
-
 # Check APPS_DIR environment variable is defined, if not ask for it.
-if [ -z "${APPS_DIR}" ]; then
-    appsDirDefault=~/code
+appsDirDefault=~/code
 
-    # Prompt the user for this value.
-    getInput "Where do you store your projects (default=${appsDirDefault}):" $appsDirDefault
+# Prompt the user for this value.
+getInput "Where do you store your projects (default=${appsDirDefault}):" $appsDirDefault
 
-    APPS_DIR="${getInputReturn}"
+appsDir="${getInputReturn}"
 
-    if [ -n "${din1}" ]; then
-        APPS_DIR="${din1}"
-    fi
+printf "You entered ${appsDir} for APPS_DIR\n"
 
-    addedEnvVar+=("APPS_DIR")
-    addUserEnvVar "APPS_DIR" "${APPS_DIR}"
+if [ ! -d "${appsDir}" ]; then
+    printf "${appsDir} is not a directory. Please try again with a valid directory to continue.\n"
+    exit 1
 fi
 
-if [ -z "${DOCKER_APPS_DIR}" ]; then
-    addedEnvVar+=("DOCKER_APPS_DIR")
-    addUserEnvVar "DOCKER_APPS_DIR" "/code"
-fi
-
-if [ -z "${NGINX_CONFS_DIR}" ]; then
-    addedEnvVar+=("NGINX_CONFS_DIR")
-    addUserEnvVar "NGINX_CONFS_DIR" "${APPS_DIR}/nginx-confs"
-fi
-
-if [ -z "${SSL_DIR}" ]; then
-    addedEnvVar+=("SSL_DIR")
-    addUserEnvVar "SSL_DIR" "${APPS_DIR}/ssl"
-fi
-
-addedEnvVar+=("BACKUP_DIR")
-addUserEnvVar 'BACKUP_DIR' "${APPS_DIR}/backup"
-addedEnvVar+=("MONGO_DKR_BKUP_DIR")
-addUserEnvVar 'MONGO_DKR_BKUP_DIR' '/var/lib/mongodb-backup'
-addedEnvVar+=("MONGO_DKR_DATA_DIR")
-addUserEnvVar 'MONGO_DKR_DATA_DIR' '/var/lib/mongodb'
-addedEnvVar+=("MONGO_DKR_LOG_DIR")
-addUserEnvVar 'MONGO_DKR_LOG_DIR' '/var/log/mongodb'
-addedEnvVar+=("WEB_ENV_DIR")
-addUserEnvVar 'WEB_ENV_DIR' $DIR
-
-if [ -z "${HOST_IP}" ]; then
-    addedEnvVar+=("HOST_IP")
-    addUserEnvVar 'HOST_IP' '$(ipconfig getifaddr en0)'
-fi
-
-if [ ! "${#addedEnvVar[@]}" -eq 0 ]; then
-    printf "New environment variables were added: ${addedEnvVar}, if you want them to take effect, please close all terminals and open again.\n"
-    printf "${addedEnvVar}.\n"
-fi
+addUserEnvVar 'APPS_DIR' "'${appsDir}'"
+addUserEnvVar 'DOCKER_APPS_DIR' "'/code'"
+addUserEnvVar 'NGINX_CONFS_DIR' "'${appsDir}/nginx-confs'"
+addUserEnvVar 'SSL_DIR' "'${appsDir}/ssl'"
+addUserEnvVar 'BACKUP_DIR' "'${appsDir}/backup'"
+addUserEnvVar 'MONGO_DKR_BKUP_DIR' "'/var/lib/mongodb-backup'"
+addUserEnvVar 'MONGO_DKR_DATA_DIR' "'/var/lib/mongodb'"
+addUserEnvVar 'MONGO_DKR_LOG_DIR' "'/var/log/mongodb'"
+addUserEnvVar 'WEB_ENV_DIR' "'$DIR'"
+addUserEnvVar 'HOST_IP' '$(ipconfig getifaddr en0)'
 
 #link short-cut
-ln -s "${APPS_DIR}/web-env/web-env.sh" /usr/local/bin/webenv
+if [ ! -f "/usr/local/bin/webenv" ]; then
+    printf "Added webenv symlink to /usr/local/bin/webenv\n"
+    ln -s "${appsDir}/web-env/web-env.sh" /usr/local/bin/webenv
+else
+    printf "Symlink webenv successfully detected in /usr/local/bin/webenv\n"
+fi
