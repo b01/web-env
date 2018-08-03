@@ -9,14 +9,15 @@ source "${DIR}"/flags.sh
 
 "${DIR}"/build-env.sh
 
+#TODO Move this out of the repo.
 docker volume create mongoData
 docker volume create mongoLog
 
-DOCKER_COMPOSE_CMD='docker-compose --project-name=web_env up --no-recreate --remove-orphans'
-
-if [ -n "${dcFile}" ]; then
-    DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
+if [ -z "${dcFile}" ]; then
+    dcFile="${WEB_ENV_DIR}/docker-compose.yml"
 fi
+
+DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
 
 printf "Starting web Docker environment in a new terminal Window.\n"
 new_tab "WebEnv Monitor" "cd ${CWD} && ${DOCKER_COMPOSE_CMD}"
