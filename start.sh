@@ -20,7 +20,7 @@ fi
 DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
 
 printf "Starting web Docker environment in a new terminal Window.\n"
-new_tab "WebEnv Monitor" "cd ${CWD} && ${DOCKER_COMPOSE_CMD}"
+new_tab "bash -c 'cd ${CWD} ; ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
 
 # "i" controls home many seconds this loop runs, as snore will sleep for 1 second each iteration.
 i=1
@@ -50,5 +50,5 @@ fi
 container=$(docker ps -aq -f "name=${iaterm}" -f "status=running")
 if [ -n "${container}" ]; then
     printf "Open a new terminal window to the docker container ${iaterm}.\n"
-    new_tab "Docker ${iaterm}" "docker exec -it ${container} sh"
+    new_tab "docker exec -it ${container} sh" "Docker ${iaterm}"
 fi

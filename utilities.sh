@@ -2,12 +2,19 @@
 
 # Mac OS X - Open a command in a new terminal window/tab.
 new_tab() {
-    TAB_NAME=$1
-    COMMAND=$2
+    COMMAND=$1
+    TAB_NAME=''
+
+    if [ -n "${2}" ]; then
+        TAB_NAME="printf '\\\e]1;${1}\\\a';"
+    fi
+
+    # Open a new tab
+    #-e "do script \"${TAB_NAME} ${COMMAND}\" in front window" \
     osascript \
         -e "tell application \"Terminal\"" \
         -e "tell application \"System Events\" to keystroke \"t\" using {command down}" \
-        -e "do script \"printf '\\\e]1;$TAB_NAME\\\a'; $COMMAND\" in front window" \
+        -e "do script \"${COMMAND}\" in front window" \
         -e "end tell" > /dev/null
 }
 
