@@ -17,7 +17,7 @@ function addUserEnvVar () {
     hasVar=$(echo "${fileContents}" | grep -c --color=never -E "^export\s+${envName}")
 
     if [ "${hasVar}" = "0" ]; then
-        printf "export ${envName}=${envValue}\n" >> "${envFile}"
+        printf "\nexport ${envName}=${envValue}" >> "${envFile}"
         printf "Added ${envName} to environment\n"
     else
         searchTerm="^export ${envName}.*"
@@ -70,7 +70,7 @@ addUserEnvVar 'HOST_IP' '$(ipconfig getifaddr en0)'
 #link short-cut
 if [ ! -f "/usr/local/bin/webenv" ]; then
     printf "Added webenv symlink to /usr/local/bin/webenv\n"
-    ln -s "${appsDir}/web-env/web-env.sh" /usr/local/bin/webenv
+    ln -s "${WEB_ENV_DIR}/web-env.sh" /usr/local/bin/webenv
 else
     printf "Symlink webenv successfully detected in /usr/local/bin/webenv\n"
 fi

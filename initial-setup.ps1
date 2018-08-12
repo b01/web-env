@@ -62,7 +62,6 @@ if (!$HOST_IP) {
     Add-Content -Path $Profile.CurrentUserAllHosts -Value "`n`$Env:HOST_IP = `$HOST_IP"
 }
 
-$webEnvDir = "${appsDir}\web-env"
-Invoke-Expression -Command "& `"${webEnvDir}\add-commands.ps1`""
+Invoke-Expression -Command "& `"${WEB_ENV_DIR}\add-commands.ps1`""
 
 printf "`n**You may need to logout and then log back in order for these changes to take effect!**"
