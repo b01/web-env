@@ -4,8 +4,6 @@ if [ -z "${APPS_DIR}" ] && [ -z "${BASH_VERSION}" ]; then
     source ~/.bash_profile
 fi
 
-WEB_ENV_DIR="${APPS_DIR}"/web-env
-
 command=''
 
 # Filter and shorten the commands that can be run though this script.

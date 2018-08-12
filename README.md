@@ -20,4 +20,4 @@ variables in order to use this tool on your computer.
 * Mac OS X (v10.12.6) with Terminal (v2.7.3) / Windows 10 with PowerShell 5+
 
 ### How to use WebEnv
-To get started see [How to Use Web Env](./docs/index.md)
+To get started see [How to Use WebEnv](./docs/index.md)
