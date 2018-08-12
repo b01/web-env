@@ -18,13 +18,19 @@ source "${DIR}"/flags.sh
 docker volume create mongoData
 docker volume create mongoLog
 
+if [ -n "${dcFile}" ] && [[ "${dcFile::1}" != "/" ]]; then
+    dcFile="${CWD}/${dcFile}"
+    printf "changing dcFile to ${dcFile}\n"
+fi
+
 if [ -z "${dcFile}" ]; then
     dcFile="${WEB_ENV_DIR}/docker-compose.yml"
 fi
 
-if [[ " ${dcFile::1}" != "/" ]]; then
-    dcFile="${CWD}/${dcFile}"
-    printf "changing dcFile to ${dcFile}\n"
+echo "wTime = ${wTime}"
+
+if [ -z "${wTime}" ]; then
+    wTime=300
 fi
 
 DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
@@ -37,24 +43,36 @@ else
 fi
 
 # "i" controls home many seconds this loop runs, as snore will sleep for 1 second each iteration.
-i=1
+i=$wTime
 isUp=''
+iLen=${#i}
 
-printf "Starting web environment ..."
-while [ -n "${cname}" ] && [ $i -lt 10 ]; do
-    (( i++ ))
+# Just to make output pleasant.
+if [ -n "${cname}" ]; then
+    printf "Time remaining for containers to spin up: "
+fi
 
-    printf "."
+while [ -n "${cname}" ] && [ $i -gt 0 ]; do
+    (( i-- ))
+
+    iLen=${#i}
+
+    printf "${i}"
 
     isUp=$(docker ps -aq -f "name=${cname}" -f "status=running")
 
     if [ -n "${isUp}" ]; then
+        printf "\010%.0s" $(seq 1 $iLen)
+        sleep 1
         break
     fi
 
     sleep 1
+
+    printf "\010%.0s" $(seq 1 $iLen)
 done
-printf " done\n"
+
+printf "done.\n"
 
 # These can only run if the above process was started in a new window.
 if [ "${nWin}" = 1 ]; then
@@ -64,9 +82,13 @@ if [ "${nWin}" = 1 ]; then
         source "${DIR}/copies.sh" "${cname}"
     fi
 
+    if [ -z "${entryPoint}" ]; then
+        entryPoint='sh'
+    fi
+
     container=$(docker ps -aq -f "name=${iaterm}" -f "status=running")
     if [ -n "${container}" ]; then
         printf "Open a new terminal window to the docker container ${iaterm}.\n"
-        new_tab "docker exec -it ${container} sh" "Docker ${iaterm}"
-    fi
+        new_tab "docker exec -it ${container} ${entryPoint}" "Docker ${iaterm}"
+  fi
 fi
