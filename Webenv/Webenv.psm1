@@ -5,7 +5,6 @@ function Use-Webenv
         $cmdParams = ''
         $thisModuleRoot = $MyInvocation.MyCommand.Module.ModuleBase
         . "${thisModuleRoot}\.env.ps1"
-        #$WEB_ENV_DIR = Get-Content -Path "${thisModuleRoot}\.env.ps1"
 
         if ($args.Length -gt 1) {
             $cmdParams = $args[1..($args.Length - 1)]

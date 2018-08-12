@@ -3,12 +3,34 @@
 ca      Configure application. Requires a git repo
         URL as it first argument.
 
+        Takes a required first argument which must be the
+        URL to a git repository.
+
+        -n An nginx container copy an nginx config to and
+           then restart.
+
 cp      Copies SSH keys and git configuration to a container.
+
+        -c (required) A container to copy SSH keys and git
+           config to.
 
 up      Start the web environment. With no options
         this uses the default docker compose config
         that comes with this tool.
 
+        -f Path to a docker-compose configuration.
+
+        -c A running container to copy ssh keys and gitconfig
+           files to.
+
+        -n A running container to open a terminal to.
+
+        -t Time to wait before handing control back to the
+           command line. Has no effect if -c and -n options
+           are not passed in.
+
 dn      Stop the web environment. With no options
         this uses the default docker compose config
         that comes with this tool.
+
+        -f path to a docker-compose configuration.

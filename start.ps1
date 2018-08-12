@@ -6,7 +6,8 @@
 Param(
     [string]$f = '', # path to a a docker compose config file.
     [string]$c = '', # container to run copies on.
-    [string]$n = '' # container to connect a terminal to.
+    [string]$n = '', # container to connect a terminal to.
+    [Int32]$t = 300 # time to wait for container to spin up.
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
@@ -31,22 +32,28 @@ if ($n) {
     $dcTerm = "${n}"
 }
 
+if ($t) {
+    $wTime = $t
+}
+
 $DOCKER_COMPOSE_CMD="docker-compose -f `"${dcFile}`" --project-name=web_env up --no-recreate --remove-orphans"
 
 # Run docker compose in a new window.
 newWindow $DOCKER_COMPOSE_CMD $DIR
-$maxWait = 30
-$val = 0
-while($val -lt $maxWait) {
+
+# Wait for Docker to spin up the containers.
+$timer = $wTime
+
+while($timer -gt 0) {
     $isUp=$(docker ps -aq -f "name=${cname}" -f "status=running")
 
     if ($isUp) {
-        printf "container is up"
-        $val = $maxWait
+        Write-Progress -Activity "waiting for containers to spin up" -Completed -Status 'container is up'
+        break
     }
 
-    $val++
-    printf "${val}."
+    $timer--
+    Write-Progress -Activity "waiting for containers to spin up" -SecondsRemaining $timer
     Start-Sleep -Seconds 1
 }
 
