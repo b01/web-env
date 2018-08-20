@@ -46,13 +46,17 @@ while [ -n "${cname}" ] && [ $i -lt 10 ]; do
 done
 printf " done\n"
 
-# Run copies command on container(s) passed in to cname variable.
-if [ -n "${isUp}" ]; then
-    source "${DIR}/copies.sh" "${cname}"
-fi
+# These can only run if the above process was started in a new window.
+if [ "${nWin}" = 1 ]; then
 
-container=$(docker ps -aq -f "name=${iaterm}" -f "status=running")
-if [ -n "${container}" ]; then
-    printf "Open a new terminal window to the docker container ${iaterm}.\n"
-    new_tab "docker exec -it ${container} sh" "Docker ${iaterm}"
+    # Run copies command on container(s) passed in to cname variable.
+    if [ -n "${isUp}" ]; then
+        source "${DIR}/copies.sh" "${cname}"
+    fi
+
+    container=$(docker ps -aq -f "name=${iaterm}" -f "status=running")
+    if [ -n "${container}" ]; then
+        printf "Open a new terminal window to the docker container ${iaterm}.\n"
+        new_tab "docker exec -it ${container} sh" "Docker ${iaterm}"
+    fi
 fi
