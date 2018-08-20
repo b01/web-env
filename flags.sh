@@ -45,6 +45,16 @@ while test $# -gt 0; do
                         fi
                         shift
                         ;;
+                -w)
+                        shift
+                        if test $# -gt 0; then
+                                export nWin=$1
+                        else
+                                echo "no container name specified"
+                                exit 1
+                        fi
+                        shift
+                        ;;
                 *)
                         break
                         ;;

@@ -19,8 +19,12 @@ fi
 
 DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
 
-printf "Starting web Docker environment in a new terminal Window.\n"
-new_tab "bash -c 'cd ${CWD} ; ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
+if [ "${nWin}" = "1" ]; then
+    printf "Starting web Docker environment in a new terminal Window.\n"
+    new_tab "bash -l -c 'cd ${CWD} && ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
+else
+    bash -l -c "${DOCKER_COMPOSE_CMD}"
+fi
 
 # "i" controls home many seconds this loop runs, as snore will sleep for 1 second each iteration.
 i=1
