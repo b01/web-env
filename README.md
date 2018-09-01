@@ -1,3 +1,7 @@
+[![CircleCI](https://circleci.com/gh/b01/web-env.svg?style=svg)](https://circleci.com/gh/b01/web-env)
+
+--
+
 ## Summary
 A tool to automate setting up a standard web development environment; written 
 in shell scripts and based on visualization technology. 
