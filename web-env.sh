@@ -30,5 +30,5 @@ esac
 # Run the actual script and pass all arguments (excluding the first) along.
 if [ -n "${command}" ]; then
     shift
-    bash -e "${WEB_ENV_DIR}"/"${command}".sh $@
+    bash -e "${WEB_ENV_DIR}/${command}".sh $@
 fi

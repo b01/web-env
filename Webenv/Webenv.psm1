@@ -1,7 +1,6 @@
 function Use-Webenv
 {
     process {
-        $webEnvDir = "${APPS_DIR}\web-env"
         $short = $args[0]
         $cmdParams = ''
 
@@ -34,7 +33,7 @@ function Use-Webenv
         }
 
         if ($command) {
-            $script = "${webEnvDir}\${command}.ps1"
+            $script = "${WEB_ENV_DIR}\${command}.ps1"
             Write-Verbose "Executing ${script}"
             Invoke-Expression "& `"${script}`" ${cmdParams}"
         } else {
