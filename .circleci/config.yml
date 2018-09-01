@@ -1,0 +1,12 @@
+version: 2
+jobs:
+    build:
+        working_directory: ~/code
+        docker:
+            - image: alpine:edge
+        steps:
+            - checkout
+            - run:
+                name: Shell Unit Tests
+                command: |
+                    ./tests/flagsTest.sh
