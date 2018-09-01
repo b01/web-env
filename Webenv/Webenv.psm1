@@ -30,14 +30,17 @@ function Use-Webenv
                 Write-Verbose "mapping up to start.`n"
                 break
             }
+            default {
+                echo "Unknown command: ${short}. Please use one of the following:"
+                echo ""
+                Get-Help webenv
+            }
         }
 
         if ($command) {
             $script = "${WEB_ENV_DIR}\${command}.ps1"
             Write-Verbose "Executing ${script}"
             Invoke-Expression "& `"${script}`" ${cmdParams}"
-        } else {
-
         }
     }
 }
