@@ -33,7 +33,7 @@ function Use-Webenv
             default {
                 echo "Unknown command: ${short}. Please use one of the following:"
                 echo ""
-                Get-Help webenv
+                Get-Content "${WEB_ENV_DIR}\help.md" | foreach {Write-Output $_}
             }
         }
 
