@@ -1,10 +1,19 @@
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
+. "${DIR}\.env.ps1"
+
 . "${DIR}\utilities.ps1"
 
-$webEnvDir = "${APPS_DIR}\web-env"
+$webEnvDir = "${WEB_ENV_DIR}\web-env"
 $userModules = "${Env:USERPROFILE}\Documents\WindowsPowerShell\Modules\"
-$webEnvModule = "${webEnvDir}\Webenv\"
+$webEnvModule = "${WEB_ENV_DIR}\Webenv\"
+
+# We move from using profile.ps1 to a self-contained app method.
+# Now we still need to supply $WEB_ENV_DIR to the module during
+# run-time. So we give the modules its own env file to load.
+$webEnvFile = "${webEnvModule}\.env.ps1"
+Out-File $webEnvFile -Encoding ascii
+Set-Content -Path $webEnvFile -Value "`$WEB_ENV_DIR = '${WEB_ENV_DIR}'" -Encoding String
 
 # This works, but was not needed after all, left here for reference.
 #$envUserPaths = [Environment]::GetEnvironmentVariable('Path', 'User')

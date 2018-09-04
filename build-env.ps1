@@ -1,6 +1,7 @@
-#!/bin/bash -e
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
+
+. "${DIR}\.env.ps1"
 
 . "${DIR}\utilities.ps1"
 
@@ -10,7 +11,7 @@ if (!$APPS_DIR) {
     exit 1
 }
 
-$APPS_ENV_FILE = "${DIR}\apps.env"
+$APPS_ENV_FILE = "${WEB_ENV_DIR}\apps.env"
 rm "${APPS_ENV_FILE}" -ErrorAction Ignore
 Out-File $APPS_ENV_FILE -Encoding ascii
 $content = ''

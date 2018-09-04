@@ -9,6 +9,8 @@ Param(
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
+. "${DIR}\.env.ps1"
+
 . "$DIR\utilities.ps1"
 
 if (!$container) {

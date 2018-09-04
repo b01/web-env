@@ -5,9 +5,9 @@
 
 # Persist in PowerShell user profile script as a global variable.
 function addPsEnvVar() {
-    param ($envName, $envVal)
+    param ($file, $envName, $envVal)
 
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`n`$${envName} = ${envVal}"
+    Add-Content -Path $file -Value "`n`$${envName} = ${envVal}"
 }
 
 function newWindow {
@@ -41,7 +41,8 @@ function setEnvVar {
     Set-Variable -Name "${envName}" -Value "${envVal}" -Scope global
 
     setUserEnvVar $envName $envVal
-    setPsProfileVar $envName "`$Env:${envName}"
+    setPsProfileVar "`Env:${envName}" "'${envVal}'"
+    setPsProfileVar "${envName}" "'${envVal}'"
 }
 
 # Persist environment variable in the Powsershell profile
@@ -53,13 +54,12 @@ function setPsProfileVar
     $regEx = "\`$${envName} =.*"
     $regExRpl = "(?>=<\`$${envName} =.*)"
 
-
-    $content = (Get-Content $Profile.CurrentUserAllHosts)
+    $content = (Get-Content $ENV_FILE)
     if ($content -match $regEx) {
-        regReplace $Profile.CurrentUserAllHosts $regExRpl $envVal
+        regReplace $ENV_FILE $regExRpl $envVal
         printf "Updated Powershell Env varaible ${envName}"
     } else {
-        addPsEnvVar $envName $envVal
+        addPsEnvVar $ENV_FILE $envName $envVal
         printf "Set Powershell Env varaible ${envName}"
     }
 }

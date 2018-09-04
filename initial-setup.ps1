@@ -10,6 +10,7 @@ Param(
 )
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
+$WEB_ENV_DIR = $DIR
 
 . "${DIR}\utilities.ps1"
 
@@ -28,6 +29,12 @@ if ($Env:HOMESHARE) {
 
 # First, lets make sure the directory exist, otherwise this script will error.
 md $UserPsDir -Force
+
+#$ENV_FILE = $Profile.CurrentUserAllHosts
+$ENV_FILE = "${WEB_ENV_DIR}\.env.ps1"
+rm "${ENV_FILE}" -ErrorAction Ignore
+Out-File $ENV_FILE -Encoding ascii
+printf "ENV_FILE = ${ENV_FILE}"
 
 # Add some evironment variables.
 setEnvVar 'WEB_ENV_DIR' $DIR
@@ -58,8 +65,8 @@ if (!$HOST_IP) {
     Set-Variable "`$HOST_IP" $runtimeVal -Scope global
     Set-Item "Env:HOST_IP" $HOST_IP
     # Will persist in PowerShell as a global and an environment variable.
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`n`$HOST_IP = Get-IpString"
-    Add-Content -Path $Profile.CurrentUserAllHosts -Value "`n`$Env:HOST_IP = `$HOST_IP"
+    Add-Content -Path $ENV_FILE -Value "`n`$HOST_IP = Get-IpString"
+    Add-Content -Path $ENV_FILE -Value "`n`$Env:HOST_IP = `$HOST_IP"
 }
 
 Invoke-Expression -Command "& `"${WEB_ENV_DIR}\add-commands.ps1`""
