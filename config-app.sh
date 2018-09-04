@@ -1,7 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash
 
-# Directory of this script.
-DIR=$( cd "$( dirname "$0" )" && pwd )
+set -e
+
+DIR=$( cd "$(dirname ${0})" && pwd)
+
+source $DIR/.env
 
 # Check APPS_DIR environment variable is defined.
 if [ -z "${APPS_DIR}" ]; then

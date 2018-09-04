@@ -7,7 +7,7 @@ if [ -z "${APPS_DIR}" ]; then
 fi
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-APPS_ENV_FILE="${DIR}/apps.env"
+APPS_ENV_FILE="${WEB_ENV_DIR}/apps.env"
 
 shopt -s nullglob
 envFiles=("${APPS_DIR}"/*/web-env/env-vars.txt)

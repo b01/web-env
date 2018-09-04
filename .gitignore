@@ -4,8 +4,11 @@
 
 # Files
 #------
+*.code-workspace
 *.swp
 .DS_Store
-*.code-workspace
+/.env
+/.env.ps1
 /apps.env
 /docker-compose*.yml
+/Webenv/.env.ps1

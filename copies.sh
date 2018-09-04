@@ -1,4 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
+
+DIR=$( cd "$(dirname ${0})" && pwd)
+
+source $DIR/.env
 
 function copySshKeysToContainer() {
     sshDir=$1

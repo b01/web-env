@@ -1,6 +1,11 @@
-#!/bin/bash -e
+#!/bin/bash
 
-DIR=$( cd "$( dirname "$0" )" && pwd )
+set -e
+
+DIR=$( cd "$(dirname ${0})" && pwd)
+
+source $DIR/.env
+
 package="stop.sh"
 
 source "${DIR}"/flags.sh

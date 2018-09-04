@@ -9,8 +9,10 @@ Param(
 
 $DIR = split-path -parent $MyInvocation.MyCommand.Definition
 
+. "${DIR}\.env.ps1"
 
 if (!$dcFile) {
     $dcFile = "${WEB_ENV_DIR}\docker-compose.yml"
 }
+
 docker-compose -f "`"${dcFile}`"" --project-name=web_env down
