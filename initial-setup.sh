@@ -39,9 +39,8 @@ function getInput() {
 DIR=$( cd "$( dirname "$0" )" && pwd )
 WEB_ENV_DIR="${DIR}"
 envFile="${WEB_ENV_DIR}/.env"
-fileContents=$(cat "${envFile}")
 
-#echo '# WebEnv Environment variables:' > "${WEB_ENV_DIR}/.env"
+echo '# WebEnv Environment variables:' > "${WEB_ENV_DIR}/.env"
 
 if [ -f "$" ]; then
     echo "Could NOT make ${envFile}"
