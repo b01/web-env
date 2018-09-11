@@ -26,7 +26,7 @@ DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-r
 
 if [ "${nWin}" = "1" ]; then
     printf "Starting web Docker environment in a new terminal Window.\n"
-    new_tab "bash -l -c 'cd ${CWD} && ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
+    new_tab "bash -l -c 'cd ${CWD} && source .env && ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
 else
     bash -l -c "${DOCKER_COMPOSE_CMD}"
 fi
