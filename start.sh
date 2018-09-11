@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -22,11 +22,16 @@ if [ -z "${dcFile}" ]; then
     dcFile="${WEB_ENV_DIR}/docker-compose.yml"
 fi
 
+if [[ " ${dcFile::1}" != "/" ]]; then
+    dcFile="${CWD}/${dcFile}"
+    printf "changing dcFile to ${dcFile}\n"
+fi
+
 DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
 
 if [ "${nWin}" = "1" ]; then
     printf "Starting web Docker environment in a new terminal Window.\n"
-    new_tab "bash -l -c 'cd ${CWD} && source .env && ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
+    new_tab "bash -l -c 'cd ${WEB_ENV_DIR} && source .env && ${DOCKER_COMPOSE_CMD}'" "WebEnv Monitor"
 else
     bash -l -c "${DOCKER_COMPOSE_CMD}"
 fi
