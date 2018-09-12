@@ -38,9 +38,9 @@ function getInput() {
 # Directory of this script.
 DIR=$( cd "$( dirname "$0" )" && pwd )
 WEB_ENV_DIR="${DIR}"
-envFile="${WEB_ENV_DIR}/.env"
+envFile="${WEB_ENV_DIR}/env.sh"
 
-echo '# WebEnv Environment variables:' > "${WEB_ENV_DIR}/.env"
+echo '# WebEnv Environment variables:' > "${envFile}"
 
 if [ -f "$" ]; then
     echo "Could NOT make ${envFile}"
@@ -75,10 +75,14 @@ addUserEnvVar 'HOST_IP' '$(ipconfig getifaddr en0 2>/dev/null)'
 
 #link short-cut
 if [ -d "/usr/local/bin" ]; then
-    if [ ! -f "/usr/local/bin/webenv" ]; then
-        printf "Added webenv symlink to /usr/local/bin/webenv\n"
-        ln -s $WEB_ENV_DIR/web-env.sh /usr/local/bin/webenv
-    else
+    if [ -f "/usr/local/bin/webenv" ]; then
         printf "Symlink webenv successfully detected in /usr/local/bin/webenv\n"
+    else
+        SYM_FILE='/usr/local/bin/webenv'
+        SYM_USER=$(whoami)
+        #&& chown -h ${SYM_USER} /usr/local/bin/webenv
+        LNK_CMD="ln -s ${WEB_ENV_DIR}/web-env.sh ${SYM_FILE} && chown -h ${SYM_USER} ${SYM_FILE}"
+        osascript -e "do shell script \"${LNK_CMD}\" with administrator privileges"
+        printf "Added webenv symlink to /usr/local/bin/webenv\n"
     fi
 fi
