@@ -94,7 +94,7 @@ if [ -d "/usr/local/bin" ]; then
         SYM_FILE='/usr/local/bin/webenv'
         SYM_USER=$(whoami)
         LNK_CMD="ln -s ${WEB_ENV_DIR}/web-env.sh ${SYM_FILE} && chown -h ${SYM_USER} ${SYM_FILE}"
-        elevate_cmd $LNK_CMD
+        elevate_cmd "${LNK_CMD}"
         printf "Added webenv symlink to /usr/local/bin/webenv\n"
     fi
 fi
