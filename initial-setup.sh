@@ -36,7 +36,10 @@ function getInput() {
 }
 
 # Directory of this script.
-DIR=$( cd "$( dirname "$0" )" && pwd )
+DIR=$( cd "$(dirname ${0})" && pwd)
+
+source $DIR/utilities.sh
+
 WEB_ENV_DIR=$DIR
 envFile="${WEB_ENV_DIR}/env.sh"
 
