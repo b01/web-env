@@ -83,6 +83,8 @@ if [ -z "${gTest}" ]; then
     getInput "would you like to source ${WEB_ENV_DIR}/env.sh in the ~/.bash_profile (yes):" "yes"
     if [ "${getInputReturn}" = "yes" ]; then
         printf "\nsource "$WEB_ENV_DIR/env.sh"\n" >> ~/.bash_profile
+    else
+        printf "skipping\n"
     fi
 fi
 
@@ -95,6 +97,8 @@ if [ -d "/usr/local/bin" ]; then
         SYM_USER=$(whoami)
         LNK_CMD="ln -s ${WEB_ENV_DIR}/web-env.sh ${SYM_FILE} && chown -h ${SYM_USER} ${SYM_FILE}"
         elevate_cmd "${LNK_CMD}"
-        printf "Added webenv symlink to /usr/local/bin/webenv\n"
+        if [ -f "/usr/local/bin/webenv" ]; then
+            printf "Successfully added webenv symlink to /usr/local/bin\n"
+        fi
     fi
 fi
