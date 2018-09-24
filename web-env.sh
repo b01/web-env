@@ -1,6 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash
 
-if [ -z "${APPS_DIR}" ] && [ -z "${BASH_VERSION}" ]; then
+set -e
+
+if [ -z "${WEB_ENV_DIR}" ]; then
     source ~/.bash_profile
 fi
 
