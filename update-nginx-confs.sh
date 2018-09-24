@@ -4,7 +4,7 @@ set -e
 
 DIR=$( cd "$(dirname ${0})" && pwd)
 
-source $DIR/.env
+source $DIR/env.sh
 
 # Copy all applications nginx files into the mapped NginX vhost configuration directory.
 printf "Copying NginX configs over to mapped conatiner directory.\n"

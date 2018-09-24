@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 function addUserEnvVar () {
     envName=$1
@@ -37,7 +37,7 @@ function getInput() {
 
 # Directory of this script.
 DIR=$( cd "$( dirname "$0" )" && pwd )
-WEB_ENV_DIR="${DIR}"
+WEB_ENV_DIR=$DIR
 envFile="${WEB_ENV_DIR}/env.sh"
 
 echo '# WebEnv Environment variables:' > "${envFile}"
@@ -62,16 +62,26 @@ if [ ! -d "${appsDir}" ]; then
     exit 1
 fi
 
-addUserEnvVar 'APPS_DIR' "'${appsDir}'"
-addUserEnvVar 'DOCKER_APPS_DIR' "'/code'"
-addUserEnvVar 'NGINX_CONFS_DIR' "'${appsDir}/nginx-confs'"
-addUserEnvVar 'SSL_DIR' "'${appsDir}/ssl'"
-addUserEnvVar 'BACKUP_DIR' "'${appsDir}/backup'"
-addUserEnvVar 'MONGO_DKR_BKUP_DIR' "'/var/lib/mongodb-backup'"
-addUserEnvVar 'MONGO_DKR_DATA_DIR' "'/var/lib/mongodb'"
-addUserEnvVar 'MONGO_DKR_LOG_DIR' "'/var/log/mongodb'"
-addUserEnvVar 'WEB_ENV_DIR' "'${DIR}'"
+addUserEnvVar 'APPS_DIR' "${appsDir}"
+addUserEnvVar 'DOCKER_APPS_DIR' "/code"
+addUserEnvVar 'NGINX_CONFS_DIR' "${appsDir}/nginx-confs"
+addUserEnvVar 'SSL_DIR' "${appsDir}/ssl"
+addUserEnvVar 'BACKUP_DIR' "${appsDir}/backup"
+addUserEnvVar 'MONGO_DKR_BKUP_DIR' "/var/lib/mongodb-backup"
+addUserEnvVar 'MONGO_DKR_DATA_DIR' "/var/lib/mongodb"
+addUserEnvVar 'MONGO_DKR_LOG_DIR' "/var/log/mongodb"
+addUserEnvVar 'WEB_ENV_DIR' "${DIR}"
 addUserEnvVar 'HOST_IP' '$(ipconfig getifaddr en0 2>/dev/null)'
+
+# append the env file to the end of the bash script, but only if it does not exist.
+gTest=$(grep -E -e "^source\s+.*/web-env/env.sh$" ~/.bash_profile)
+
+if [ -z "${gTest}" ]; then
+    getInput "would you like to source ${WEB_ENV_DIR}/env.sh in the ~/.bash_profile (yes):" "yes"
+    if [ "${getInputReturn}" = "yes" ]; then
+        printf "\nsource "$WEB_ENV_DIR/env.sh"\n" >> ~/.bash_profile
+    fi
+fi
 
 #link short-cut
 if [ -d "/usr/local/bin" ]; then
@@ -80,9 +90,8 @@ if [ -d "/usr/local/bin" ]; then
     else
         SYM_FILE='/usr/local/bin/webenv'
         SYM_USER=$(whoami)
-        #&& chown -h ${SYM_USER} /usr/local/bin/webenv
         LNK_CMD="ln -s ${WEB_ENV_DIR}/web-env.sh ${SYM_FILE} && chown -h ${SYM_USER} ${SYM_FILE}"
-        osascript -e "do shell script \"${LNK_CMD}\" with administrator privileges"
+        elevate_cmd $LNK_CMD
         printf "Added webenv symlink to /usr/local/bin/webenv\n"
     fi
 fi

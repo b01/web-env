@@ -23,3 +23,9 @@ snore()
 {
     read -t $1 -u 1
 }
+
+elevate_cmd ()
+{
+    COMMAND=$1
+    osascript -e "do shell script \"${COMMAND}\" with administrator privileges"
+}
