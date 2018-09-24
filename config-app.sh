@@ -4,7 +4,7 @@ set -e
 
 DIR=$( cd "$(dirname ${0})" && pwd)
 
-source $DIR/.env
+source $DIR/env.sh
 
 # Check APPS_DIR environment variable is defined.
 if [ -z "${APPS_DIR}" ]; then

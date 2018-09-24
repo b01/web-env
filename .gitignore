@@ -11,4 +11,5 @@
 /.env.ps1
 /apps.env
 /docker-compose*.yml
+/env.sh
 /Webenv/.env.ps1
