@@ -23,18 +23,6 @@ function addUserEnvVar () {
     export "${envName}=${envValue}"
 }
 
-function getInput() {
-    msg=$1
-    getInputReturn=$2
-
-    # Prompt the user for this value.
-    read -p "${msg}" din1
-
-    if [ -n "${din1}" ]; then
-        getInputReturn="${din1}"
-    fi
-}
-
 # Directory of this script.
 DIR=$( cd "$(dirname ${0})" && pwd)
 

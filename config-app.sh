@@ -4,7 +4,11 @@ set -e
 
 DIR=$( cd "$(dirname ${0})" && pwd)
 
-source $DIR/env.sh
+source "${DIR}"/env.sh
+source "${DIR}"/utilities.sh
+source "${DIR}"/flags.sh
+
+endMsgs=''
 
 # Check APPS_DIR environment variable is defined.
 if [ -z "${APPS_DIR}" ]; then
@@ -19,13 +23,13 @@ fi
 # $3 optional = (alpine-nginx)
 # $4 optional = (/private/etc/hosts)
 
-if [ -z "${1}" ]; then
-    printf "Missing the required first parameter which should a git repository. Exiting.\n"
+if [ -z "${repo}" ]; then
+    printf "Missing the required -r parameter which should a git repository. Exiting.\n"
     exit 1
 fi
 
 # 1. Parse the app name, for ex: git@git:marketing-web/quickenloans.git => quickenloans
-APP_NAME=$(echo "${1}" | perl -pe 's#.+\/(.+?).git$#\1#g')
+APP_NAME=$(echo "${repo}" | perl -pe 's#.+\/(.+?).git$#\1#g')
 WEB_ENV_DIR=$(echo "${APPS_DIR}/${APP_NAME}/web-env/")
 
 printf "Spinning up ${APP_NAME}\n"
@@ -33,24 +37,24 @@ printf "...\n"
 
 # Allow an app container to be specified.
 APP_CONTAINER="alpine-apps"
-if [ -n "${2}" ]; then
-    APP_CONTAINER="${2}"
+if [ -n "${cname}" ]; then
+    APP_CONTAINER="${cname}"
 fi
 printf "Using app container: ${APP_CONTAINER}\n"
 
-# Allow an nginx container to be specified.
+# Allow an NginX container to be specified.
 NGINX_CONTAINER="alpine-nginx"
-if [ -n "${3}" ]; then
-    NGINX_CONTAINER="${3}"
+if [ -n "${iaterm}" ]; then
+    NGINX_CONTAINER="${iaterm}"
 fi
 printf "Using NGinX container: ${NGINX_CONTAINER}\n"
 
-# Check $CMP_HOST_FILE environment variable is defined.
-CMP_HOST_FILE="/private/etc/hosts"
-if [ -n "${4}" ]; then
-    CMP_HOST_FILE=$4
+# Check $PC_HOST_FILE environment variable is defined.
+PC_HOST_FILE="/private/etc/hosts"
+if [ -n "${hFile}" ]; then
+    PC_HOST_FILE=$hFile
 fi
-printf "Using hosts file: ${CMP_HOST_FILE}\n"
+printf "Using hosts file: ${PC_HOST_FILE}\n"
 
 # Check NGINX_CONFS_DIR environment variable is defined.
 if [ -z "${NGINX_CONFS_DIR}" ]; then
@@ -64,12 +68,12 @@ printf "CWD: " && pwd
 
 # 2. Clone the repo, if it does not already exist.
 if [ ! -d "${APP_NAME}" ]; then
-    git clone "${1}"
+    git clone "${repo}"
 else
     printf "Directory found ${APP_NAME}. Skipping git clone process.\n"
 fi
 
-# 3. Setup with Nginx container.
+# 3. Setup with NginX container.
 APP_NGINX_CONF_DIR="${APPS_DIR}/${APP_NAME}/web-env"
 
 NGINX_CONF_FILE=$(find "${APP_NGINX_CONF_DIR}" -name "*-nginx.conf")
@@ -89,10 +93,17 @@ if [ -f "${NGINX_CONF_FILE}" ] && [ -n "${dockerNginxId}" ]; then
     printf "Generating a named SSL certificate for the app ${NGINX_NAME}.docker\n"
     docker exec "${NGINX_CONTAINER}" generate-named-ssl-cert.sh "${NGINX_NAME}.docker"
 
-    nginxConfigFound=$(cat $CMP_HOST_FILE | grep "${NGINX_NAME}.docker")
-    if [ -z "${nginxConfigFound}" ]; then
-        # Add the apps domain to host PCs' hosts file
-        printf "Don't forget to add '${NGINX_NAME}.docker' to the host PCs' host file.\n"
+    if ! grep "${NGINX_NAME}.docker" $PC_HOST_FILE; then
+        # Prompt to add the apps domain to host PCs' hosts file.
+        getInput "would you like to add ${NGINX_NAME}.docker to the ${PC_HOST_FILE} file (default=yes):" "yes"
+
+        answr="${getInputReturn}"
+
+        if [ "${answr}" = "yes" ]; then
+            elevate_cmd "echo \\\"127.0.0.1    ${NGINX_NAME}.docker\n::1          ${NGINX_NAME}.docker\n\\\" >> ${PC_HOST_FILE}"
+        else
+            endMsgs="${endMsgs}Don not forget to add ${NGINX_NAME}.docker to this computers host file.\n"
+        fi
     fi
 
     # Restart the NginX services
@@ -137,3 +148,8 @@ if [ -f "${BUILD_SCRIPT}" ]; then
 else
     printf "No build script found at the location ${BUILD_SCRIPT}. Skipping.\n"
 fi
+
+
+printf "\n\n"
+printf $endMsgs
+printf "\n\n"

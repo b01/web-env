@@ -1,5 +1,26 @@
 #!/bin/bash -e
 
+
+
+function getInput() {
+    msg=$1
+    getInputReturn=$2
+
+    # Prompt the user for this value.
+    read -p "${msg}" din1
+
+    if [ -n "${din1}" ]; then
+        getInputReturn="${din1}"
+    fi
+}
+
+elevate_cmd ()
+{
+    COMMAND=$1
+    osascript -e "do shell script \"${COMMAND}\" with administrator privileges"
+}
+
+
 # Mac OS X - Open a command in a new terminal window/tab.
 new_tab() {
     COMMAND=$1
@@ -22,10 +43,4 @@ new_tab() {
 snore()
 {
     read -t $1 -u 1
-}
-
-elevate_cmd ()
-{
-    COMMAND=$1
-    osascript -e "do shell script \"${COMMAND}\" with administrator privileges"
 }

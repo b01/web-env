@@ -50,6 +50,16 @@ while test $# -gt 0; do
             fi
             shift
         ;;
+        --host)
+            shift
+            if test $# -gt 0; then
+                export hFile=$1
+            else
+                echo "no path to a host file specified"
+                exit 1
+            fi
+            shift
+        ;;
         -n)
             shift
             if test $# -gt 0; then
@@ -60,12 +70,12 @@ while test $# -gt 0; do
             fi
             shift
         ;;
-        -w)
+        -r)
             shift
             if test $# -gt 0; then
-                export nWin=$1
+                export repo=$1
             else
-                echo "no container name specified"
+                echo "please specify a repository URL"
                 exit 1
             fi
             shift
@@ -76,6 +86,16 @@ while test $# -gt 0; do
                 export wTime=$1
             else
                 echo "please specify time in seconds"
+                exit 1
+            fi
+            shift
+        ;;
+        -w)
+            shift
+            if test $# -gt 0; then
+                export nWin=$1
+            else
+                echo "no container name specified"
                 exit 1
             fi
             shift
