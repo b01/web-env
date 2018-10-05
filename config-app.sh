@@ -150,6 +150,4 @@ else
 fi
 
 
-printf "\n\n"
-printf $endMsgs
-printf "\n\n"
+printf "\n\n$endMsgs\n\n"

@@ -18,6 +18,8 @@ up      Start the web environment. With no options
         this uses the default docker compose config
         that comes with this tool.
         
+        -e Entrypoint for a container. Has no effect if -n flag is set.
+        
         -f Path to a docker-compose configuration.
         
         -c A running container to copy ssh keys and gitconfig
