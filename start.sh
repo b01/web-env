@@ -14,10 +14,6 @@ source "${DIR}"/flags.sh
 
 "${DIR}"/build-env.sh
 
-#TODO Move this out of the repo.
-docker volume create mongoData
-docker volume create mongoLog
-
 if [ -n "${dcFile}" ] && [[ "${dcFile::1}" != "/" ]]; then
     dcFile="${CWD}/${dcFile}"
     printf "changing dcFile to ${dcFile}\n"
@@ -27,13 +23,14 @@ if [ -z "${dcFile}" ]; then
     dcFile="${WEB_ENV_DIR}/docker-compose.yml"
 fi
 
-echo "wTime = ${wTime}"
-
 if [ -z "${wTime}" ]; then
     wTime=300
 fi
 
-DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up --no-recreate --remove-orphans"
+echo "wTime = ${wTime}"
+echo "cname = ${cname}"
+
+DOCKER_COMPOSE_CMD="docker-compose -f ${dcFile} --project-name=web_env up -d --no-recreate --remove-orphans"
 
 if [ "${nWin}" = "1" ]; then
     printf "Starting web Docker environment in a new terminal Window.\n"
